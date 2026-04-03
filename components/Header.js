@@ -12,37 +12,38 @@ export default function Header() {
           resizeMode="contain"
         />
       </View>
-      <View style={styles.searchBar}>
-        <TextInput
-          placeholder="Tìm kiếm..."
-          style={styles.input}
-          placeholderTextColor="#999"
-        />
-        <TouchableOpacity style={styles.searchButton}>
-          <Ionicons name="search" size={20} color="#666" />
-        </TouchableOpacity>
-      </View>
+      {/*<View style={styles.searchBar}>*/}
+      {/*  <TextInput*/}
+      {/*    placeholder="Tìm kiếm..."*/}
+      {/*    style={styles.input}*/}
+      {/*    placeholderTextColor="#999"*/}
+      {/*  />*/}
+      {/*  <TouchableOpacity style={styles.searchButton}>*/}
+      {/*    <Ionicons name="search" size={20} color="#666" />*/}
+      {/*  </TouchableOpacity>*/}
+      {/*</View>*/}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: 80,
-    backgroundColor: '#1e293b',
+    height: 65,
+    // backgroundColor: '#1e293b',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
-    paddingTop: 30, // For status bar compensation
-    borderBottomWidth: 1,
-    borderBottomColor: '#334155',
+    paddingTop: 15, // For status bar compensation
+    // borderBottomWidth: 1,
+    // borderBottomColor: '#334155',
+    justifyContent: 'center'
   },
   logoContainer: {
-    flex: 1,
+    // flex: 1,
   },
   logo: {
-    width: 120,
-    height: 40,
+    width: 100,
+    height: 30,
   },
   searchBar: {
     flex: 1.5,

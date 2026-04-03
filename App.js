@@ -5,7 +5,6 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Header from './components/Header';
 import Home from './components/Home';
 import BookDetail from './components/BookDetail';
 import Reading from './components/Reading';
@@ -13,6 +12,9 @@ import Library from './components/Library';
 import Ranking from './components/Ranking';
 import Profile from './components/Profile';
 import BookList from './components/BookList';
+import Search from './components/Search';
+import BookTacGia from "./components/BookTacGia";
+import BookCategory from "./components/BookCategory";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -28,6 +30,7 @@ function MainTabs() {
           if (route.name === 'Library') iconName = focused ? 'library' : 'library-outline';
           else if (route.name === 'Explore') iconName = focused ? 'compass' : 'compass-outline';
           else if (route.name === 'Ranking') iconName = focused ? 'trophy' : 'trophy-outline';
+          else if (route.name === 'Search') iconName = focused ? 'search' : 'search-outline';
           else if (route.name === 'Account') iconName = focused ? 'person' : 'person-outline';
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -38,6 +41,7 @@ function MainTabs() {
     >
       <Tab.Screen name="Library" component={Library} options={{ title: 'Tủ truyện' }} />
       <Tab.Screen name="Explore" component={Home} options={{ title: 'Khám phá' }} />
+      <Tab.Screen name="Search" component={Search} options={{ title: 'Tìm truyện' }} />
       <Tab.Screen name="Ranking" component={Ranking} options={{ title: 'Xếp hạng' }} />
       <Tab.Screen name="Account" component={Profile} options={{ title: 'Tài khoản' }} />
     </Tab.Navigator>
@@ -48,8 +52,8 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
-        <StatusBar style="light" />
-        <Header />
+        <StatusBar style="dark" />
+
         <View style={{ flex: 1 }}>
           <NavigationContainer>
             <Stack.Navigator 
@@ -63,6 +67,8 @@ export default function App() {
               <Stack.Screen name="Detail" component={BookDetail} />
               <Stack.Screen name="Reading" component={Reading} />
               <Stack.Screen name="BookList" component={BookList} />
+              <Stack.Screen name="BookTacGia" component={BookTacGia} />
+              <Stack.Screen name="BookCategory" component={BookCategory} />
             </Stack.Navigator>
           </NavigationContainer>
         </View>
@@ -74,6 +80,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1e293b',
+    // backgroundColor: '#1e293b',
   },
 });

@@ -2,14 +2,14 @@ import React from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
-const CARD_WIDTH = (width - 45) / 2; // 2 columns with padding
+const CARD_WIDTH = (width - 45) / 3; // 2 columns with padding
 
 export default function BookCard({ book }) {
   return (
     <View style={styles.container} activeOpacity={0.8}>
       <View style={styles.imageWrapper}>
         <Image
-          source={{ uri: book.cover }}
+          source={{ uri: book.thumbnail }}
           style={styles.cover}
           resizeMode="cover"
         />
@@ -19,7 +19,7 @@ export default function BookCard({ book }) {
       </View>
       <View style={styles.info}>
         <Text style={styles.title} numberOfLines={2}>{book.title}</Text>
-        <Text style={styles.chapter}>Chương {book.chapter}</Text>
+        <Text style={styles.chapter}>Chương {book.tong_so_chuong}</Text>
       </View>
     </View>
   );
@@ -28,7 +28,7 @@ export default function BookCard({ book }) {
 const styles = StyleSheet.create({
   container: {
     width: CARD_WIDTH,
-    marginBottom: 20,
+    marginBottom: 0,
     // backgroundColor: '#fff',
     // borderRadius: 8,
     overflow: 'hidden',
@@ -40,9 +40,9 @@ const styles = StyleSheet.create({
   },
   imageWrapper: {
     width: '100%',
-    height: 220,
+    height: 160,
     position: 'relative',
-    borderRadius: 8,
+    borderRadius: 4,
     overflow: 'hidden'
   },
   cover: {
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   },
   domain: {
     color: '#fff',
-    fontSize: 10,
+    fontSize: 8,
     opacity: 0.8,
   },
   info: {

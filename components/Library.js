@@ -1,23 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Image, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import {getViewedStories} from "./viewedStories";
 
 const { width } = Dimensions.get('window');
-
-const HISTORY_DATA = [
-  {
-    id: '1',
-    title: 'Mẹ Kế Ở Cổ Đại Làm Cá Mặn',
-    chapter: '12',
-    cover: 'https://truyenvietonline.com/wp-content/uploads/2026/03/me-ke-o-co-dai-lam-ca-man.webp',
-  },
-  {
-    id: '2',
-    title: 'All In Love',
-    chapter: '5',
-    cover: 'https://truyenvietonline.com/wp-content/uploads/2026/03/all-in-love.webp',
-  },
-];
 
 const BOOKMARK_DATA = [
   {
@@ -31,17 +17,27 @@ const BOOKMARK_DATA = [
 export default function Library({ navigation }) {
   const [activeTab, setActiveTab] = useState('history'); // 'history' or 'bookmark'
 
+  const [viewedStories, setViewedStories] = useState([]);
+
+  useEffect(() => {
+    const fetchViewed = async () => {
+      const stories = await getViewedStories();
+      setViewedStories(stories);
+    };
+    fetchViewed();
+  }, []);
+
   const renderItem = ({ item }) => (
     <TouchableOpacity 
       style={styles.itemContainer}
-      onPress={() => navigation.navigate('Detail', { book: item })}
+      onPress={() => navigation.navigate('Reading', { book: item, chapter: {id:  item.chapter_id} })}
     >
       <Image source={{ uri: item.cover }} style={styles.cover} resizeMode="cover" />
       <View style={styles.info}>
         <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
         <View style={styles.progressRow}>
           <Ionicons name="book-outline" size={14} color="#64748b" />
-          <Text style={styles.chapterText}>Đang đọc: Chương {item.chapter}</Text>
+          <Text style={styles.chapterText}>Đang đọc: Chương {item.lastReadChapter}</Text>
         </View>
       </View>
       <TouchableOpacity style={styles.moreBtn}>
@@ -73,7 +69,7 @@ export default function Library({ navigation }) {
       </View>
 
       <FlatList
-        data={activeTab === 'history' ? HISTORY_DATA : BOOKMARK_DATA}
+        data={activeTab === 'history' ? viewedStories : BOOKMARK_DATA}
         renderItem={renderItem}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.listContent}
