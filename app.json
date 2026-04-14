@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "book_truyen",
-    "slug": "book_truyen",
+    "name": "Truyện Việt",
+    "slug": "truyen_viet_online",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.nguyenpt.booktruyen"
+      "bundleIdentifier": "com.truyenviet.online"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +22,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.nguyenpt.booktruyen"
+      "package": "com.truyenviet.online"
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -29,14 +29,7 @@ const styles = StyleSheet.create({
   container: {
     width: CARD_WIDTH,
     marginBottom: 0,
-    // backgroundColor: '#fff',
-    // borderRadius: 8,
     overflow: 'hidden',
-    // shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 4,
-    // elevation: 3,
   },
   imageWrapper: {
     width: '100%',

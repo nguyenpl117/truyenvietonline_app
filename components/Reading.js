@@ -82,7 +82,7 @@ export default function Reading({ route, navigation }) {
   useEffect(() => {
     const fetchDetail = async () => {
       try {
-        const data = await getChapterDetail(chapter.id); // make sure book.id exists
+        const data = await getChapterDetail(chapter.id, book.id); // make sure book.id exists
         if (book && data) {
           addViewedStory(book, data.id, data.chapter_number);
         }

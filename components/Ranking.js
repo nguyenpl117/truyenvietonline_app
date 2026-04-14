@@ -1,96 +1,89 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { StyleSheet, View, Text, Image, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import {getChapterDetail, getTopTruyen, searchTruyen} from "../api/truyenApi";
+import {addViewedStory} from "./viewedStories";
 
 const RANK_TABS = [
   { id: 'views', title: 'Lượt đọc' },
-  { id: 'nominations', title: 'Đề cử' },
-  { id: 'comments', title: 'Bình luận' },
-  { id: 'unlock', title: 'Mở khóa' },
-  { id: 'rewards', title: 'Tặng thưởng' },
+  // { id: 'nominations', title: 'Đề cử' },
+  // { id: 'comments', title: 'Bình luận' },
+  // { id: 'unlock', title: 'Mở khóa' },
+  // { id: 'rewards', title: 'Tặng thưởng' },
 ];
 
-const RANKING_DATA = [
-  {
-    id: '1',
-    rank: 1,
-    title: 'Kiếm Lai',
-    author: 'Phong Hỏa Hí Chư Hầu',
-    rating: 4.8,
-    chapters: 1200,
-    cover: 'https://truyenvietonline.com/wp-content/uploads/2026/03/me-ke-o-co-dai-lam-ca-man.webp', // Placeholder
-    color: '#ef4444',
-  },
-  {
-    id: '2',
-    rank: 2,
-    title: 'Nghịch Thiên Tà Thần',
-    author: 'Hỏa Tinh Dẫn Lực',
-    rating: 4.7,
-    chapters: 1800,
-    cover: 'https://truyenvietonline.com/wp-content/uploads/2026/03/all-in-love.webp', // Placeholder
-    color: '#10b981',
-  },
-  {
-    id: '3',
-    rank: 3,
-    title: 'Đấu La Đại Lục',
-    author: 'Đường Gia Tam Thiếu',
-    rating: 4.9,
-    chapters: 900,
-    cover: 'https://truyenvietonline.com/wp-content/uploads/2026/03/gioi-han-si-me-thoi-kinh-kinh.webp', // Placeholder
-    color: '#f59e0b',
-  },
-  {
-    id: '4',
-    rank: 4,
-    title: 'Phàm Nhân Tu Tiên',
-    author: 'Vong Ngữ',
-    rating: 4.6,
-    chapters: 2400,
-    cover: 'https://truyenvietonline.com/wp-content/uploads/2026/03/xin-em-dung-khoc.webp', // Placeholder
-    color: '#3b82f6',
-  },
-];
+const COLOR = ['#ef4444', '#10b981', '#f59e0b']
 
 export default function Ranking({ navigation }) {
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('views');
+  const fetchTopTruyen = async () => {
+    try {
+      setLoading(true);
+      const res = await getTopTruyen();
+      console.log(res)
 
-  const renderStars = (rating) => {
+      const newData = res || [];
+      setResults(newData);
+
+    } catch (error) {
+      console.log('Search error:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchTopTruyen()
+  }, []);
+
+  const getData = (id) =>{
+    setActiveTab(id);
+    if(id == 'views'){
+      fetchTopTruyen()
+    }
+  }
+
+
+
+  const renderStars = (rating, views) => {
     return (
-      <View style={styles.starRow}>
-        <Ionicons name="star" size={12} color="#f59e0b" />
-        <Text style={styles.ratingText}>{rating}</Text>
-      </View>
+        <View style={styles.starRow}>
+          <Ionicons name="star" size={12} color="#f59e0b" />
+          <Text style={styles.ratingText}>{rating}/10</Text>
+          <Ionicons name="eye" size={12} color="#f59e0b" style={{marginLeft: 10}}/>
+          <Text style={styles.ratingText}>{views}</Text>
+        </View>
     );
   };
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity 
-      style={styles.itemContainer}
-      onPress={() => navigation.navigate('Detail', { book: item })}
-    >
-      <Image source={{ uri: item.cover }} style={styles.cover} resizeMode="cover" />
-      
-      <View style={styles.info}>
-        <View style={styles.titleRow}>
-          <View style={[styles.rankBadge, { backgroundColor: item.color }]}>
-            <Text style={styles.rankBadgeText}>{item.rank}</Text>
+  const renderItem = ({ item,index }) => (
+      <TouchableOpacity
+          style={styles.itemContainer}
+          onPress={() => navigation.navigate('Detail', { book: item })}
+      >
+        <Image source={{ uri: item.thumbnail }} style={styles.cover} resizeMode="cover" />
+
+        <View style={styles.info}>
+          <View style={styles.titleRow}>
+            <View style={[styles.rankBadge, { backgroundColor: index  < 3 ? COLOR[index ] : '#999' }]}>
+              <Text style={styles.rankBadgeText}>{index+1 }</Text>
+            </View>
+            <Text style={styles.title} numberOfLines={1}>{item.tieu_de}</Text>
           </View>
-          <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-        </View>
-        <View style={styles.metaRow}>
-          <Ionicons name="person-outline" size={12} color="#64748b" />
-          <Text style={styles.authorText} numberOfLines={1}>{item.author}</Text>
-        </View>
-        <View style={styles.bottomMeta}>
-          {renderStars(item.rating)}
-          <View style={styles.chapterTag}>
-            <Text style={styles.chapterTagText}>{item.chapters} chương</Text>
+          <View style={styles.metaRow}>
+            <Ionicons name="person-outline" size={12} color="#64748b" />
+            <Text style={styles.authorText} numberOfLines={1}>{item.tac_gia[0].name}</Text>
+          </View>
+          <View style={styles.bottomMeta}>
+            {renderStars(item.avg, item.views)}
+
+            <View style={styles.chapterTag}>
+              <Text style={styles.chapterTagText}>{item.tong_so_chuong} chương</Text>
+            </View>
           </View>
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
   );
 
   return (
@@ -110,7 +103,7 @@ export default function Ranking({ navigation }) {
             <TouchableOpacity 
               key={tab.id}
               style={[styles.tabItem, activeTab === tab.id && styles.activeTabItem]}
-              onPress={() => setActiveTab(tab.id)}
+              onPress={() => getData(tab.id)}
             >
               <Text style={[styles.tabText, activeTab === tab.id && styles.activeTabText]}>
                 {tab.title}
@@ -121,9 +114,9 @@ export default function Ranking({ navigation }) {
       </View>
 
       <FlatList
-        data={RANKING_DATA}
+        data={results}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={(item, index) => item.id.toString() + '_' + index}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
       />

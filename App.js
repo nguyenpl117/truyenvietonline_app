@@ -31,7 +31,7 @@ function MainTabs() {
           else if (route.name === 'Explore') iconName = focused ? 'compass' : 'compass-outline';
           else if (route.name === 'Ranking') iconName = focused ? 'trophy' : 'trophy-outline';
           else if (route.name === 'Search') iconName = focused ? 'search' : 'search-outline';
-          else if (route.name === 'Account') iconName = focused ? 'person' : 'person-outline';
+          // else if (route.name === 'Account') iconName = focused ? 'person' : 'person-outline';
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#1e40af',
@@ -43,7 +43,7 @@ function MainTabs() {
       <Tab.Screen name="Explore" component={Home} options={{ title: 'Khám phá' }} />
       <Tab.Screen name="Search" component={Search} options={{ title: 'Tìm truyện' }} />
       <Tab.Screen name="Ranking" component={Ranking} options={{ title: 'Xếp hạng' }} />
-      <Tab.Screen name="Account" component={Profile} options={{ title: 'Tài khoản' }} />
+      {/*<Tab.Screen name="Account" component={Profile} options={{ title: 'Tài khoản' }} />*/}
     </Tab.Navigator>
   );
 }

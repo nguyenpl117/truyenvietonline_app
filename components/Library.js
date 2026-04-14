@@ -60,12 +60,12 @@ export default function Library({ navigation }) {
           <Text style={[styles.tabText, activeTab === 'history' && styles.activeTabText]}>Lịch sử</Text>
         </TouchableOpacity>
         <View style={styles.tabDivider} />
-        <TouchableOpacity 
-          style={[styles.tabItem, activeTab === 'bookmark' && styles.activeTabItem]}
-          onPress={() => setActiveTab('bookmark')}
-        >
-          <Text style={[styles.tabText, activeTab === 'bookmark' && styles.activeTabText]}>Đánh dấu</Text>
-        </TouchableOpacity>
+        {/*<TouchableOpacity */}
+        {/*  style={[styles.tabItem, activeTab === 'bookmark' && styles.activeTabItem]}*/}
+        {/*  onPress={() => setActiveTab('bookmark')}*/}
+        {/*>*/}
+        {/*  <Text style={[styles.tabText, activeTab === 'bookmark' && styles.activeTabText]}>Đánh dấu</Text>*/}
+        {/*</TouchableOpacity>*/}
       </View>
 
       <FlatList

@@ -5,20 +5,21 @@ import BookCard from './BookCard';
 import Header from "./Header";
 import SelectTheLoaiDropdown from "./SelectTheLoai";
 import {getTheLoai, getTheLoaiDetail} from "../api/truyenApi";
-
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 const { width } = Dimensions.get('window');
 
 
 export default function Home({ navigation }) {
 
   const [theloai, setTheLoai] = useState([]);
+  const [theloaiSelect, setTheloaiSelect] = useState({});
 
 
   const renderBookSection = (title, data, backgroundColor) => (
     <View style={[styles.section, { backgroundColor }]}>
       <TouchableOpacity
         style={styles.categoryHeader}
-        onPress={() => navigation.navigate('BookList', { category: title })}
+        onPress={() => navigation.navigate('BookCategory', {category: {id: theloaiSelect.value, name: theloaiSelect.label}})}
         activeOpacity={0.7}
       >
         <Text style={styles.categoryTitle}>{title}</Text>
@@ -40,11 +41,12 @@ export default function Home({ navigation }) {
     </View>
   );
 
-  const fetchTheLoaiDetail = async (id) => {
-    if(!id) return;
+  const fetchTheLoaiDetail = async (data) => {
+    if(data && !data.value) return;
     try {
-      const data = await getTheLoaiDetail(id);
-      setTheLoai(data);
+      setTheloaiSelect(data)
+      const obj = await getTheLoaiDetail(data.value);
+      setTheLoai(obj);
     } catch (err) {
     } finally {
     }
@@ -54,92 +56,31 @@ export default function Home({ navigation }) {
 
       <View style={styles.container}>
         <Header />
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled"
-                    contentContainerStyle={{ flexGrow: 1 }} nestedScrollEnabled={true}>
-          <View style={styles.boxTop}>
-            <TouchableOpacity style={styles.itemTop}>
-              <Ionicons name="star-sharp" size={22} color="#1e40af" />
-              <Text style={styles.itemTopText}>Đánh Giá</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.itemTop}>
-              <Ionicons name="heart" size={22} color="#1e40af" />
-              <Text style={styles.itemTopText}>Yêu Thích</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.itemTop}>
-              <Ionicons name="stats-chart-outline" size={22} color="#1e40af" />
-              <Text style={styles.itemTopText}>Xem Nhiều</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.itemTop}>
-              <Ionicons name="pulse-outline" size={22} color="#1e40af" />
-              <Text  style={styles.itemTopText}>Thịnh Hành</Text>
-            </TouchableOpacity>
-          </View>
 
-          <SelectTheLoaiDropdown onChange={(termId) => fetchTheLoaiDetail(termId)} />
-          {theloai && renderBookSection('NGÔN TÌNH', theloai, '#f1f5f9')}
-
-
-
-          {/*/!* RECENT UPDATES *!/*/}
-          {/*<View style={styles.footerBlock}>*/}
-          {/*  <View style={styles.footerHeader}>*/}
-          {/*    <Text style={styles.footerHeaderText}>TRUYỆN CẬP NHẬT MỚI NHẤT</Text>*/}
-          {/*  </View>*/}
-          {/*  {UPDATED_STORIES.map((item) => (*/}
-          {/*      <TouchableOpacity key={item.id} style={styles.updatedItem}>*/}
-          {/*        <Text style={styles.updatedTitle}>{item.title}</Text>*/}
-          {/*        <Text style={styles.updatedTime}>Đang Ra {item.time}</Text>*/}
-          {/*      </TouchableOpacity>*/}
-          {/*  ))}*/}
-          {/*</View>*/}
-
-          {/*/!* CATEGORIES GRID *!/*/}
-          {/*<View style={styles.footerBlock}>*/}
-          {/*  <View style={styles.footerHeader}>*/}
-          {/*    <Text style={styles.footerHeaderText}>THỂ LOẠI TRUYỆN</Text>*/}
-          {/*  </View>*/}
-          {/*  <View style={styles.categoriesGrid}>*/}
-          {/*    {CATEGORIES.map((cat) => (*/}
-          {/*        <TouchableOpacity key={cat} style={styles.categoryItem}>*/}
-          {/*          <Ionicons name="pricetag" size={14} color="#1e40af" style={{ marginRight: 8 }} />*/}
-          {/*          <Text style={styles.categoryText}>{cat}</Text>*/}
-          {/*        </TouchableOpacity>*/}
-          {/*    ))}*/}
-          {/*  </View>*/}
-          {/*</View>*/}
-
-          {/*/!* TOP BOOKS *!/*/}
-          {/*<View style={styles.footerBlock}>*/}
-          {/*  <View style={styles.footerHeader}>*/}
-          {/*    <Text style={styles.footerHeaderText}>TOP TRUYỆN HAY</Text>*/}
-          {/*  </View>*/}
-          {/*  {TOP_BOOKS.map((item) => (*/}
-          {/*      <TouchableOpacity key={item.id} style={styles.topItem}>*/}
-          {/*        <Text style={[styles.rankText, { color: item.color }]}>{item.id}</Text>*/}
-          {/*        <View style={styles.topInfo}>*/}
-          {/*          <Text style={styles.topTitle} numberOfLines={1}>{item.title}</Text>*/}
-          {/*          <View style={styles.viewRow}>*/}
-          {/*            <Ionicons name="eye" size={12} color="#94a3b8" />*/}
-          {/*            <Text style={styles.viewCount}>{item.views}</Text>*/}
-          {/*          </View>*/}
-          {/*        </View>*/}
-          {/*      </TouchableOpacity>*/}
-          {/*  ))}*/}
-          {/*  <TouchableOpacity style={styles.btnSeeMore}>*/}
-          {/*    <Text style={styles.seeMoreText}>Xem thêm</Text>*/}
-          {/*    <Ionicons name="chevron-down" size={14} color="#fff" />*/}
+        <ScrollView style={styles.container} nestedScrollEnabled={true}>
+          {/*<View style={styles.boxTop}>*/}
+          {/*  <TouchableOpacity style={styles.itemTop}>*/}
+          {/*    <Ionicons name="star-sharp" size={22} color="#1e40af" />*/}
+          {/*    <Text style={styles.itemTopText}>Đánh Giá</Text>*/}
+          {/*  </TouchableOpacity>*/}
+          {/*  <TouchableOpacity style={styles.itemTop}>*/}
+          {/*    <Ionicons name="heart" size={22} color="#1e40af" />*/}
+          {/*    <Text style={styles.itemTopText}>Yêu Thích</Text>*/}
+          {/*  </TouchableOpacity>*/}
+          {/*  <TouchableOpacity style={styles.itemTop}>*/}
+          {/*    <Ionicons name="stats-chart-outline" size={22} color="#1e40af" />*/}
+          {/*    <Text style={styles.itemTopText}>Xem Nhiều</Text>*/}
+          {/*  </TouchableOpacity>*/}
+          {/*  <TouchableOpacity style={styles.itemTop}>*/}
+          {/*    <Ionicons name="pulse-outline" size={22} color="#1e40af" />*/}
+          {/*    <Text  style={styles.itemTopText}>Thịnh Hành</Text>*/}
           {/*  </TouchableOpacity>*/}
           {/*</View>*/}
+          <View>
+            <SelectTheLoaiDropdown onChange={(termId) => fetchTheLoaiDetail(termId)} />
+          </View>
+          {theloai && renderBookSection(theloaiSelect.label, theloai, '#f1f5f9')}
 
-          {/*/!* COPYRIGHT FOOTER *!/*/}
-          {/*<View style={styles.copyrightFooter}>*/}
-          {/*  <Text style={styles.copyrightText}>*/}
-          {/*    Website TruyệnViệtOnline - là trang đọc truyện chữ online hàng đầu Việt Nam với nhiều thể loại truyện đam mỹ, truyện ngôn tình, truyện sắc chọn lọc dành cho độc giả yêu thích.*/}
-          {/*  </Text>*/}
-          {/*  <Text style={styles.copyrightText}>*/}
-          {/*    Copyright © truyenvietonline.com. All Rights Reserved.*/}
-          {/*  </Text>*/}
-          {/*</View>*/}
         </ScrollView>
       </View>
 

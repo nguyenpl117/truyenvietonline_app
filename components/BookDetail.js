@@ -20,18 +20,6 @@ import ChapterModal from "./ChapterModal";
 
 const { width } = Dimensions.get('window');
 
-const CATEGORIES = [
-  'Bách Hợp', 'Cổ Đại', 'Cung Đấu', 'Dị Giới', 'Dị Năng', 'Gia Đấu', 'Hài Hước', 'Hệ Thống',
-  'Huyền Huyễn', 'Huyền Nghi', 'Khoa Huyễn', 'Kiếm Hiệp', 'Kỳ Ảo', 'Lịch Sử', 'Linh Dị', 'Mạt Thế'
-];
-
-const TOP_BOOKS = [
-  { id: '01', title: 'Anh Hoắc Ngoan Ngoãn Nuông Chiều Tôi', views: '4,116', color: '#ef4444' },
-  { id: '02', title: 'Vạn Cổ Thần Đế', views: '3,911', color: '#10b981' },
-  { id: '03', title: 'Thịnh Thế Hôn Nhân', views: '3,540', color: '#f59e0b' },
-  { id: '04', title: 'Mê Vợ Không Lối Về', views: '3,052', color: '#3b82f6' },
-  { id: '05', title: 'Vớt Thi Nhân', views: '2,361', color: '#6366f1' },
-];
 
 export default function BookDetail({ route, navigation }) {
   const { book } = route.params;
@@ -61,7 +49,6 @@ export default function BookDetail({ route, navigation }) {
     const fetchDetail = async () => {
       try {
         const data = await getTruyenDetail(book.id); // make sure book.id exists
-        console.log(data)
         setDetail(data);
       } catch (error) {
         console.error(error);
@@ -222,8 +209,7 @@ export default function BookDetail({ route, navigation }) {
 
           <TouchableOpacity
               onPress={() => {
-                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                setExpanded(!expanded);
+                navigation.navigate('Reading', { book: detail, chapter: {id: '000000'} })
               }}
           >
             <Text style={styles.readBtn}>
