@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import HeaderLight from "./HeaderLight";
-import {getTruyenDetail} from "../api/truyenApi";
+import { getTruyenDetail } from "../api/truyenApi";
 import RenderHTML from 'react-native-render-html';
 import ChapterModal from "./ChapterModal";
 
@@ -24,7 +24,7 @@ const { width } = Dimensions.get('window');
 export default function BookDetail({ route, navigation }) {
   const { book } = route.params;
   const [expanded, setExpanded] = useState(false);
-  const [detail, setDetail] = useState(null);
+  const [detail, setDetail] = useState({});
   const [loading, setLoading] = useState(true);
 
   const [fontSize, setFontSize] = useState(15);
@@ -35,7 +35,7 @@ export default function BookDetail({ route, navigation }) {
     setVisible(true);  // mở modal
   };
   const tagsStyles = {
-    body: { color: textColor, fontSize: fontSize,   textAlign: 'justify',  },
+    body: { color: textColor, fontSize: fontSize, textAlign: 'justify', },
     p: { marginVertical: 4, lineHeight: fontSize * 1.5 },
     em: { fontStyle: 'italic' },
     strong: { fontWeight: 'bold' },
@@ -61,180 +61,180 @@ export default function BookDetail({ route, navigation }) {
 
   if (loading) {
     return (
-        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-          <Text>Loading...</Text>
-        </View>
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <Text>Loading...</Text>
+      </View>
     );
   }
   return (
-      <View style={styles.container}>
-        <HeaderLight textTitle={detail.title} link={detail.link}/>
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-          <View style={styles.mainCard}>
-            {/* Book Info Section */}
-            <View style={styles.infoSection}>
-              <View style={styles.boxImage}>
-                <View style={styles.metaInfo}>
-                  <View style={styles.metaRow}>
-                    <Ionicons name="person" size={14} color="#64748b" />
-                    <View style={styles.metaTextWrap}>
-                      {detail.tac_gia.map((tg, index) => (
-                          <React.Fragment key={tg.id}>
-                            <Pressable onPress={() =>   navigation.navigate('BookTacGia', { author: tg })}>
-                              <Text style={styles.metaText}>{tg.name} {index < detail.tac_gia.length - 1 && ',' }</Text>
-                            </Pressable>
-                          </React.Fragment>
-                      ))}
-
-                    </View>
-                  </View>
-                  <View style={styles.metaRow}>
-                    <Ionicons name="cloud-done-outline" size={14} color="#64748b" />
-                    <Text style={styles.metaText}>{detail.status}</Text>
-                  </View>
-                  <View style={styles.metaRow}>
-                    <Ionicons name="eye" size={14} color="#64748b" />
-                    <Text style={styles.metaText}>{detail.views} lượt xem</Text>
-                  </View>
-
-                  <View style={styles.ratingRow}>
-                    {[1,2,3,4,5,6,7,8,9,10].map((star) => (
-                        <FontAwesome
-                            key={star}
-                            name="star"
-                            size={16}
-                            color={star <= detail.avg ? "#fbbf24" : "#d1d5db"} // vàng : xám
-                            style={{ marginRight: 2 }}
-                        />
+    <View style={styles.container}>
+      <HeaderLight textTitle={detail.title} link={detail.link} />
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <View style={styles.mainCard}>
+          {/* Book Info Section */}
+          <View style={styles.infoSection}>
+            <View style={styles.boxImage}>
+              <View style={styles.metaInfo}>
+                <View style={styles.metaRow}>
+                  <Ionicons name="person" size={14} color="#64748b" />
+                  <View style={styles.metaTextWrap}>
+                    {detail.tac_gia.map((tg, index) => (
+                      <React.Fragment key={tg.id}>
+                        <Pressable onPress={() => navigation.navigate('BookTacGia', { author: tg })}>
+                          <Text style={styles.metaText}>{tg.name} {index < detail.tac_gia.length - 1 && ','}</Text>
+                        </Pressable>
+                      </React.Fragment>
                     ))}
+
                   </View>
-                  {detail.count ? (
-                      <Text style={styles.ratingText}>
-                        Đánh giá:
-                        <Text style={styles.ratingBold}> {detail.avg}/10</Text>
-                        từ
-                        <Text style={styles.ratingBold}> {detail.count} lượt</Text>
-                      </Text>
-                  ) : (
-                      <Text style={styles.ratingText}>Chưa có đánh giá</Text>
-                  )}
-
+                </View>
+                <View style={styles.metaRow}>
+                  <Ionicons name="cloud-done-outline" size={14} color="#64748b" />
+                  <Text style={styles.metaText}>{detail.status}</Text>
+                </View>
+                <View style={styles.metaRow}>
+                  <Ionicons name="eye" size={14} color="#64748b" />
+                  <Text style={styles.metaText}>{detail.views} lượt xem</Text>
                 </View>
 
-                <View style={styles.coverWrapper}>
-                  <Image source={{ uri: detail.thumbnail }} style={styles.cover} resizeMode="cover" />
-                  <View style={styles.coverShadow} />
+                <View style={styles.ratingRow}>
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
+                    <FontAwesome
+                      key={star}
+                      name="star"
+                      size={16}
+                      color={star <= detail.avg ? "#fbbf24" : "#d1d5db"} // vàng : xám
+                      style={{ marginRight: 2 }}
+                    />
+                  ))}
                 </View>
+                {detail.count ? (
+                  <Text style={styles.ratingText}>
+                    Đánh giá:
+                    <Text style={styles.ratingBold}> {detail.avg}/10</Text>
+                    từ
+                    <Text style={styles.ratingBold}> {detail.count} lượt</Text>
+                  </Text>
+                ) : (
+                  <Text style={styles.ratingText}>Chưa có đánh giá</Text>
+                )}
+
               </View>
 
-              <View style={styles.metaTextWrap}>
-                {detail.the_loai.map((tg, index) => (
-                    <React.Fragment key={tg.id}>
-                      <Pressable onPress={() =>  navigation.navigate('BookCategory', { category: tg })}>
-                        <Text style={styles.metaTextTag}>{tg.name}</Text>
-                      </Pressable>
-                    </React.Fragment>
-                ))}
+              <View style={styles.coverWrapper}>
+                <Image source={{ uri: detail.thumbnail }} style={styles.cover} resizeMode="cover" />
+                <View style={styles.coverShadow} />
               </View>
-
-              {/* Latest Chapters */}
-              <Text style={styles.sectionTitleLight}>CHƯƠNG MỚI NHẤT</Text>
-              <View style={styles.listChapter}>
-
-                {detail.last_chuong.map((chapter) => (
-                    <TouchableOpacity
-                        key={chapter.id}
-                        style={styles.chapterItem}
-                        onPress={() => navigation.navigate('Reading', { book: detail, chapter })}
-                    >
-                      <Text style={styles.chapterText}>{chapter.chuong_so}</Text>
-                    </TouchableOpacity>
-                ))}
-              </View>
-              <Text style={styles.title}>{detail.title}</Text>
-
-
-              {/* Action Buttons */}
-              <View style={styles.boxAction}>
-                <TouchableOpacity style={styles.itemAction}>
-                  <Ionicons name="heart-outline" size={18} color="#01a3d0" />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.itemAction}>
-                  <Ionicons name="chatbubble-ellipses-outline" size={18} color="#01a3d0" />
-                </TouchableOpacity>
-              </View>
-
             </View>
 
-            {/* Description Section */}
-            <View style={styles.section}>
-              <View
-                  style={{ maxHeight: expanded ? undefined : 24 * 6, overflow: 'hidden' }}
-              >
-                <Text>
-                  <RenderHTML
-                      contentWidth={width}
-                      source={{ html: detail.content }}
-                      tagsStyles={tagsStyles}
-                      renderersProps={{
-                        text: { selectable: true }
-                      }}
-                  />
-                </Text>
+            <View style={styles.metaTextWrap}>
+              {detail.the_loai.map((tg, index) => (
+                <React.Fragment key={tg.id}>
+                  <Pressable onPress={() => navigation.navigate('BookCategory', { category: tg })}>
+                    <Text style={styles.metaTextTag}>{tg.name}</Text>
+                  </Pressable>
+                </React.Fragment>
+              ))}
+            </View>
 
-              </View>
+            {/* Latest Chapters */}
+            <Text style={styles.sectionTitleLight}>CHƯƠNG MỚI NHẤT</Text>
+            <View style={styles.listChapter}>
 
-              <TouchableOpacity
-                  onPress={() => {
-                    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                    setExpanded(!expanded);
-                  }}
-              >
-                <Text style={styles.readMore}>
-                  {expanded ? '...Thu gọn' : 'Xem thêm...'}
-                </Text>
+              {detail.last_chuong.map((chapter) => (
+                <TouchableOpacity
+                  key={chapter.id}
+                  style={styles.chapterItem}
+                  onPress={() => navigation.navigate('Reading', { book: detail, chapter })}
+                >
+                  <Text style={styles.chapterText}>{chapter.chuong_so}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <Text style={styles.title}>{detail.title}</Text>
+
+
+            {/* Action Buttons */}
+            <View style={styles.boxAction}>
+              <TouchableOpacity style={styles.itemAction}>
+                <Ionicons name="heart-outline" size={18} color="#01a3d0" />
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.itemAction}>
+                <Ionicons name="chatbubble-ellipses-outline" size={18} color="#01a3d0" />
               </TouchableOpacity>
             </View>
+
           </View>
 
-        </ScrollView>
+          {/* Description Section */}
+          <View style={styles.section}>
+            <View
+              style={{ maxHeight: expanded ? undefined : 24 * 6, overflow: 'hidden' }}
+            >
+              <Text>
+                <RenderHTML
+                  contentWidth={width}
+                  source={{ html: detail.content }}
+                  tagsStyles={tagsStyles}
+                  renderersProps={{
+                    text: { selectable: true }
+                  }}
+                />
+              </Text>
 
-        <View style={styles.bottomBox}>
-          <TouchableOpacity style={styles.listBtn}>
-            <Ionicons name="cloud-download-outline" size={18} color="#64748b" />
-            <Text style={styles.listBtnText}>Tải Về</Text>
-          </TouchableOpacity>
+            </View>
 
-
-          <TouchableOpacity
+            <TouchableOpacity
               onPress={() => {
-                navigation.navigate('Reading', { book: detail, chapter: {id: '000000'} })
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                setExpanded(!expanded);
               }}
-          >
-            <Text style={styles.readBtn}>
-              Đọc Truyện
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.listBtn}   onPress={() => openModal(detail.id)} >
-            <Ionicons name="list-outline" size={18} color="#64748b" />
-            <Text style={styles.listBtnText}>Mục Lục</Text>
-          </TouchableOpacity>
+            >
+              <Text style={styles.readMore}>
+                {expanded ? '...Thu gọn' : 'Xem thêm...'}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
+      </ScrollView>
 
-        <ChapterModal
-            visible={visible}
-            truyenId={detail.id}
-            onClose={() => setVisible(false)}
+      <View style={styles.bottomBox}>
+        <TouchableOpacity style={styles.listBtn}>
+          <Ionicons name="cloud-download-outline" size={18} color="#64748b" />
+          <Text style={styles.listBtnText}>Tải Về</Text>
+        </TouchableOpacity>
 
-            onSelect={(chapters) => {
-              navigation.navigate('Reading', { book: detail, chapter: chapters })
-            }}
-        />
 
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Reading', { book: detail, chapter: { id: '000000' } })
+          }}
+        >
+          <Text style={styles.readBtn}>
+            Đọc Truyện
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.listBtn} onPress={() => openModal(detail.id)} >
+          <Ionicons name="list-outline" size={18} color="#64748b" />
+          <Text style={styles.listBtnText}>Mục Lục</Text>
+        </TouchableOpacity>
       </View>
+
+
+      <ChapterModal
+        visible={visible}
+        truyenId={detail.id}
+        onClose={() => setVisible(false)}
+
+        onSelect={(chapters) => {
+          navigation.navigate('Reading', { book: detail, chapter: chapters })
+        }}
+      />
+
+    </View>
 
   );
 }
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-  boxImage:{
+  boxImage: {
     flexDirection: "row",
     justifyContent: "space-between"
   },
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: 'flex-start',
   },
-  metaTextTag:{
+  metaTextTag: {
     fontSize: 12,
     color: '#333',
     backgroundColor: '#efefef',
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginBottom: 1,
   },
-  listChapter:{
+  listChapter: {
     width: '100%',
     flexDirection: "row"
   },
@@ -517,7 +517,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
 
-  bottomBox:{
+  bottomBox: {
     flexDirection: 'row',
     backgroundColor: '#fff',
     paddingVertical: 10,
@@ -533,31 +533,31 @@ const styles = StyleSheet.create({
     // Android
     elevation: 10,
   },
-  readBtn:{
+  readBtn: {
     borderColor: '#01a3d0',
     padding: 4,
     paddingRight: 22,
     paddingLeft: 22,
     borderRadius: 20,
-    color:  '#01a3d0',
+    color: '#01a3d0',
     borderWidth: 1,
     fontSize: 17,
     fontWeight: 500
   },
-  listBtn:{
+  listBtn: {
     textAlign: 'center',
     alignItems: 'center'
   },
-  listBtnText:{
-    color:  '#01a3d0',
+  listBtnText: {
+    color: '#01a3d0',
     fontSize: 14,
     marginTop: 3
   },
-  boxAction:{
+  boxAction: {
     flexDirection: "row",
     gap: 8,
   },
-  itemAction:{
+  itemAction: {
     borderColor: "#01a3d0",
     borderWidth: 1,
     borderRadius: '50%',
