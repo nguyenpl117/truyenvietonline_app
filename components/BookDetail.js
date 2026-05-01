@@ -13,10 +13,10 @@ import {
 } from 'react-native';
 import { Ionicons, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import HeaderLight from "./HeaderLight";
-import {getTruyenDetail} from "../api/truyenApi";
+import {favoriteTruyenDetail, getTruyenDetail} from "../api/truyenApi";
 import RenderHTML from 'react-native-render-html';
 import ChapterModal from "./ChapterModal";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
 
@@ -30,7 +30,7 @@ export default function BookDetail({ route, navigation }) {
   const [fontSize, setFontSize] = useState(15);
   const [textColor, setTextColor] = useState('#000'); // mặc định đen
   const [visible, setVisible] = useState(false);
-
+  const [liked, setLiked] = useState(false);
   const openModal = (id) => {
     setVisible(true);  // mở modal
   };
@@ -42,6 +42,56 @@ export default function BookDetail({ route, navigation }) {
     h1: { fontSize: fontSize * 1.4, fontWeight: 'bold' },
     h2: { fontSize: fontSize * 1.1, fontWeight: 'bold' },
     h3: { fontSize: fontSize * 1.1, fontWeight: 'bold' },
+  };
+
+  const handleFavorite = async (truyen) => {
+    if (liked) return;
+
+    const success = await addToFavorite(truyen);
+
+    if (success) {
+      setLiked(true);
+    }
+  };
+
+  const addToFavorite = async (truyen) => {
+    try {
+      const data = await AsyncStorage.getItem('favorites');
+      let favorites = data ? JSON.parse(data) : [];
+
+      // check đã tồn tại chưa
+      const existed = favorites.find(item => item.id === truyen.id);
+
+      if (existed) {
+        console.log("Đã yêu thích rồi");
+        return false;
+      }
+
+      favorites.push({id: truyen.id, title: truyen.title, thumbnail: detail.thumbnail});
+
+      await AsyncStorage.setItem('favorites', JSON.stringify(favorites));
+
+      return true;
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const removeFavorite = async (id) => {
+    const data = await AsyncStorage.getItem('favorites');
+    let favorites = data ? JSON.parse(data) : [];
+
+    const newList = favorites.filter(item => item.id !== id);
+
+    await AsyncStorage.setItem('favorites', JSON.stringify(newList));
+    setLiked(false);
+  };
+
+  const isFavorite = async (id) => {
+    const data = await AsyncStorage.getItem('favorites');
+    let favorites = data ? JSON.parse(data) : [];
+
+    return favorites.some(item => item.id === id);
   };
 
 
@@ -57,6 +107,12 @@ export default function BookDetail({ route, navigation }) {
       }
     };
     fetchDetail();
+
+    const check = async () => {
+      const result = await isFavorite(book.id);
+      setLiked(result);
+    };
+    check();
   }, [book.id]);
 
   if (loading) {
@@ -156,8 +212,8 @@ export default function BookDetail({ route, navigation }) {
 
               {/* Action Buttons */}
               <View style={styles.boxAction}>
-                <TouchableOpacity style={styles.itemAction}>
-                  <Ionicons name="heart-outline" size={18} color="#01a3d0" />
+                <TouchableOpacity style={styles.itemAction} onPress={() => handleFavorite(detail)}>
+                  <Ionicons name={liked ? "heart" : "heart-outline"} size={18} color="#01a3d0" />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.itemAction}>

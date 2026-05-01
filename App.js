@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -15,6 +16,8 @@ import BookList from './components/BookList';
 import Search from './components/Search';
 import BookTacGia from "./components/BookTacGia";
 import BookCategory from "./components/BookCategory";
+import FavoriteScreen from "./components/FavoriteScreen";
+import {checkVersion} from "./src/utils/version";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -49,6 +52,10 @@ function MainTabs() {
 }
 
 export default function App() {
+    useEffect(() => {
+        checkVersion();
+    }, []);
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
@@ -69,6 +76,7 @@ export default function App() {
               <Stack.Screen name="BookList" component={BookList} />
               <Stack.Screen name="BookTacGia" component={BookTacGia} />
               <Stack.Screen name="BookCategory" component={BookCategory} />
+              <Stack.Screen name="FavoriteScreen" component={FavoriteScreen} />
             </Stack.Navigator>
           </NavigationContainer>
         </View>

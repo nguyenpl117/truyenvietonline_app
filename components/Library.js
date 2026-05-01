@@ -5,14 +5,6 @@ import {getViewedStories} from "./viewedStories";
 
 const { width } = Dimensions.get('window');
 
-const BOOKMARK_DATA = [
-  {
-    id: '3',
-    title: 'Giới Hạn Si Mê',
-    chapter: '1',
-    cover: 'https://truyenvietonline.com/wp-content/uploads/2026/03/gioi-han-si-me-thoi-kinh-kinh.webp',
-  },
-];
 
 export default function Library({ navigation }) {
   const [activeTab, setActiveTab] = useState('history'); // 'history' or 'bookmark'

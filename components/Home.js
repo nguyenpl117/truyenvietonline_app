@@ -58,24 +58,24 @@ export default function Home({ navigation }) {
         <Header />
 
         <ScrollView style={styles.container} nestedScrollEnabled={true}>
-          {/*<View style={styles.boxTop}>*/}
-          {/*  <TouchableOpacity style={styles.itemTop}>*/}
-          {/*    <Ionicons name="star-sharp" size={22} color="#1e40af" />*/}
-          {/*    <Text style={styles.itemTopText}>Đánh Giá</Text>*/}
-          {/*  </TouchableOpacity>*/}
-          {/*  <TouchableOpacity style={styles.itemTop}>*/}
-          {/*    <Ionicons name="heart" size={22} color="#1e40af" />*/}
-          {/*    <Text style={styles.itemTopText}>Yêu Thích</Text>*/}
-          {/*  </TouchableOpacity>*/}
-          {/*  <TouchableOpacity style={styles.itemTop}>*/}
-          {/*    <Ionicons name="stats-chart-outline" size={22} color="#1e40af" />*/}
-          {/*    <Text style={styles.itemTopText}>Xem Nhiều</Text>*/}
-          {/*  </TouchableOpacity>*/}
-          {/*  <TouchableOpacity style={styles.itemTop}>*/}
-          {/*    <Ionicons name="pulse-outline" size={22} color="#1e40af" />*/}
-          {/*    <Text  style={styles.itemTopText}>Thịnh Hành</Text>*/}
-          {/*  </TouchableOpacity>*/}
-          {/*</View>*/}
+          <View style={styles.boxTop}>
+            <TouchableOpacity style={styles.itemTop}>
+              <Ionicons name="star-sharp" size={22} color="#1e40af" />
+              <Text style={styles.itemTopText}>Đánh Giá</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.itemTop}    onPress={() => navigation.navigate('FavoriteScreen')}>
+              <Ionicons name="heart" size={22} color="#1e40af" />
+              <Text style={styles.itemTopText}>Yêu Thích</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.itemTop}   onPress={() => navigation.navigate('Ranking')}>
+              <Ionicons name="stats-chart-outline" size={22} color="#1e40af" />
+              <Text style={styles.itemTopText}>Đọc Nhiều</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.itemTop}>
+              <Ionicons name="pulse-outline" size={22} color="#1e40af" />
+              <Text  style={styles.itemTopText}>Thịnh Hành</Text>
+            </TouchableOpacity>
+          </View>
           <View>
             <SelectTheLoaiDropdown onChange={(termId) => fetchTheLoaiDetail(termId)} />
           </View>

@@ -35,8 +35,51 @@ export default function Reading({ route, navigation }) {
     strong: { fontWeight: 'bold' },
     h1: { fontSize: fontSize * 1.4, fontWeight: 'bold' },
     h2: { fontSize: fontSize * 1.2, fontWeight: 'bold' },
-    h3: { fontSize: fontSize * 1.1, fontWeight: 'bold' },
+    h3: { fontSize: fontSize * 1.1, fontWeight: 'bold' }
   };
+
+  const classesStyles = {
+    'img': {
+      maxWidth: '50%',
+      marginBottom: 30,
+      height: 120,
+      resizeMode: 'contain',
+      borderRadius: 8,
+    },
+    'shopee-soft': {
+      marginVertical: 20,
+    },
+
+    'shopee-hook': {
+      marginVertical: 20,
+    },
+
+    'shopee-deal': {
+      marginVertical: 25,
+      alignItems: 'center', // thay cho text-align: center
+    },
+
+    'deal-box': {
+      backgroundColor: '#fff3f0',
+      padding: 10,
+      borderRadius: 8,
+    },
+
+    'shopee-story': {
+      // không có style riêng ngoài link
+    },
+    'deal-link': {
+      color: '#ee4d2d',
+      fontWeight: 'bold',
+      textDecorationLine: 'none',
+    },
+    'story-link': {
+      color: '#888',
+      fontStyle: 'italic',
+      textDecorationLine: 'none',
+    }
+  };
+
 
 
   const scrollRef = useRef(null);
@@ -127,8 +170,12 @@ export default function Reading({ route, navigation }) {
               source={{ html: detail.content.replace(/<p[^>]*>(\s|&nbsp;)*<\/p>/g, '').trim() }}
               tagsStyles={tagsStyles}
               renderersProps={{
-                text: { selectable: true }
+                text: { selectable: true },
+                img: {
+                  enableExperimentalPercentWidth: true
+                }
               }}
+              classesStyles={classesStyles}
           />
         </View>
         

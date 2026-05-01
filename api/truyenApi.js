@@ -18,7 +18,26 @@ const headers = {
     'Accept': 'application/json'
 };
 
+// 1️⃣ Yeu thich truyen
+export const favoriteTruyenDetail = async (id) => {
+    try {
 
+        const response = await fetch(`${baseUrl}/favorites/${id}`, { headers });
+        console.log(response)
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Lỗi ${response.status}: ${errorData.message || 'Không lấy được dữ liệu'}`);
+        }
+
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        console.error('favoriteTruyenDetail lỗi:', error.message);
+        throw error;
+    }
+};
 
 // 1️⃣ Lấy chi tiết truyện
 export const getTruyenDetail = async (id) => {
