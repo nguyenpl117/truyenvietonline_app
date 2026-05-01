@@ -14,7 +14,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.truyenviet.online"
+      "bundleIdentifier": "com.truyenviet.online",
+      "icon": "./assets/icon.png"
     },
     "android": {
       "adaptiveIcon": {
