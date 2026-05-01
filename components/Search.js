@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {searchTruyen} from "../api/truyenApi";
-
+import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
 const COLOR = ['#ef4444', '#10b981', '#f59e0b']
 
 export default function Search({ route, navigation }) {
@@ -172,11 +172,28 @@ export default function Search({ route, navigation }) {
         onEndReached={loadMore}
         onEndReachedThreshold={0.5} // cuộn gần cuối là load
       />
+
+      {/* Banner Ad sticky bottom */}
+      <View style={styles.banner}>
+        <BannerAd
+            unitId="ca-app-pub-7354264038097352/8131740686" // test or real id
+            size={BannerAdSize.BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true,
+            }}
+        />
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  banner: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',

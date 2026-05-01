@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Image, FlatList, TouchableOpacity, SafeAreaView
 import { Ionicons } from '@expo/vector-icons';
 import HeaderLight from "./HeaderLight";
 import {authorTruyen} from "../api/truyenApi";
+import {BannerAd, BannerAdSize} from "react-native-google-mobile-ads";
 
 const COLOR = ['#ef4444', '#10b981', '#f59e0b']
 export default function BookTacGia({ route, navigation }) {
@@ -69,34 +70,37 @@ export default function BookTacGia({ route, navigation }) {
       </View>
   );
 
-  const renderItem = ({item, index }) => (
-      <TouchableOpacity
-          style={styles.itemContainer}
-          onPress={() => navigation.navigate('Detail', { book: item })}
-      >
-        <Image source={{ uri: item.thumbnail }} style={styles.cover} resizeMode="cover" />
+  const renderItem = ({item, index }) => {
+    const thumbnail = item?.thumbnail && item.thumbnail.trim() !== ''
+        ? { uri: item.thumbnail }
+        : 'https://truyenvietonline.com/wp-content/themes/truyenviet/assets/images/logo-truyen-viet-online.png'; // ảnh mặc định local
+    return (<TouchableOpacity
+        style={styles.itemContainer}
+        onPress={() => navigation.navigate('Detail', { book: item })}
+    >
+      <Image   source={thumbnail} style={styles.cover} resizeMode="cover" />
 
-        <View style={styles.info}>
-          <View style={styles.titleRow}>
-            <View style={[styles.rankBadge, { backgroundColor: index  < 3 ? COLOR[index ] : '#999' }]}>
-              <Text style={styles.rankBadgeText}>{index+1 }</Text>
-            </View>
-            <Text style={styles.title} numberOfLines={1}>{item.tieu_de}</Text>
+      <View style={styles.info}>
+        <View style={styles.titleRow}>
+          <View style={[styles.rankBadge, { backgroundColor: index  < 3 ? COLOR[index ] : '#999' }]}>
+            <Text style={styles.rankBadgeText}>{index+1 }</Text>
           </View>
-          <View style={styles.metaRow}>
-            <Ionicons name="person-outline" size={12} color="#64748b" />
-            <Text style={styles.authorText} numberOfLines={1}>{item.tac_gia[0].name}</Text>
-          </View>
-          <View style={styles.bottomMeta}>
-            {renderStars(item.avg, item.views)}
+          <Text style={styles.title} numberOfLines={1}>{item.tieu_de}</Text>
+        </View>
+        <View style={styles.metaRow}>
+          <Ionicons name="person-outline" size={12} color="#64748b" />
+          <Text style={styles.authorText} numberOfLines={1}>{item.tac_gia[0].name}</Text>
+        </View>
+        <View style={styles.bottomMeta}>
+          {renderStars(item.avg, item.views)}
 
-            <View style={styles.chapterTag}>
-              <Text style={styles.chapterTagText}>{item.tong_so_chuong} chương</Text>
-            </View>
+          <View style={styles.chapterTag}>
+            <Text style={styles.chapterTagText}>{item.tong_so_chuong} chương</Text>
           </View>
         </View>
-      </TouchableOpacity>
-  );
+      </View>
+    </TouchableOpacity>)
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -111,11 +115,27 @@ export default function BookTacGia({ route, navigation }) {
         onEndReached={loadMore}
         onEndReachedThreshold={0.5} // cuộn gần cuối là load
       />
+      {/* Banner Ad sticky bottom */}
+      <View style={styles.banner}>
+        <BannerAd
+            unitId="ca-app-pub-7354264038097352/8131740686" // test or real id
+            size={BannerAdSize.BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true,
+            }}
+        />
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  banner: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',

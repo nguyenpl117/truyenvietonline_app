@@ -17,6 +17,7 @@ import {favoriteTruyenDetail, getTruyenDetail} from "../api/truyenApi";
 import RenderHTML from 'react-native-render-html';
 import ChapterModal from "./ChapterModal";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {BannerAd, BannerAdSize} from "react-native-google-mobile-ads";
 
 const { width } = Dimensions.get('window');
 
@@ -66,8 +67,9 @@ export default function BookDetail({ route, navigation }) {
         console.log("Đã yêu thích rồi");
         return false;
       }
+      console.log(detail)
 
-      favorites.push({id: truyen.id, title: truyen.title, thumbnail: detail.thumbnail});
+      favorites.push({id: truyen.id, title: truyen.title, thumbnail: detail.thumbnail, tong_so_chuong: detail.last_chuong[0] ? detail.last_chuong[0].chuong_so : ''});
 
       await AsyncStorage.setItem('favorites', JSON.stringify(favorites));
 
@@ -99,6 +101,7 @@ export default function BookDetail({ route, navigation }) {
     const fetchDetail = async () => {
       try {
         const data = await getTruyenDetail(book.id); // make sure book.id exists
+        console.log("data", data);
         setDetail(data);
       } catch (error) {
         console.error(error);
@@ -167,8 +170,7 @@ export default function BookDetail({ route, navigation }) {
                   {detail.count ? (
                       <Text style={styles.ratingText}>
                         Đánh giá:
-                        <Text style={styles.ratingBold}> {detail.avg}/10</Text>
-                        từ
+                        <Text style={styles.ratingBold}> {detail.avg}/10 từ</Text>
                         <Text style={styles.ratingBold}> {detail.count} lượt</Text>
                       </Text>
                   ) : (
@@ -216,9 +218,9 @@ export default function BookDetail({ route, navigation }) {
                   <Ionicons name={liked ? "heart" : "heart-outline"} size={18} color="#01a3d0" />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.itemAction}>
-                  <Ionicons name="chatbubble-ellipses-outline" size={18} color="#01a3d0" />
-                </TouchableOpacity>
+                {/*<TouchableOpacity style={styles.itemAction}>*/}
+                {/*  <Ionicons name="chatbubble-ellipses-outline" size={18} color="#01a3d0" />*/}
+                {/*</TouchableOpacity>*/}
               </View>
 
             </View>
@@ -252,15 +254,25 @@ export default function BookDetail({ route, navigation }) {
                 </Text>
               </TouchableOpacity>
             </View>
+
+            <View style={{ alignItems: 'center', marginVertical: 20 }}>
+              <BannerAd
+                  unitId="ca-app-pub-7354264038097352/8131740686" // test or real id
+                  size={BannerAdSize.BANNER}
+                  requestOptions={{
+                    requestNonPersonalizedAdsOnly: true,
+                  }}
+              />
+            </View>
           </View>
 
         </ScrollView>
 
         <View style={styles.bottomBox}>
-          <TouchableOpacity style={styles.listBtn}>
-            <Ionicons name="cloud-download-outline" size={18} color="#64748b" />
-            <Text style={styles.listBtnText}>Tải Về</Text>
-          </TouchableOpacity>
+          {/*<TouchableOpacity style={styles.listBtn}>*/}
+          {/*  <Ionicons name="cloud-download-outline" size={18} color="#64748b" />*/}
+          {/*  <Text style={styles.listBtnText}>Tải Về</Text>*/}
+          {/*</TouchableOpacity>*/}
 
 
           <TouchableOpacity

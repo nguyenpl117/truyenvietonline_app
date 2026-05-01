@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, AppState } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Home from './components/Home';
 import BookDetail from './components/BookDetail';
@@ -17,7 +17,10 @@ import Search from './components/Search';
 import BookTacGia from "./components/BookTacGia";
 import BookCategory from "./components/BookCategory";
 import FavoriteScreen from "./components/FavoriteScreen";
+import RateBook from "./components/RateBook";
 import {checkVersion} from "./src/utils/version";
+import { AppOpenAd, TestIds, AdEventType } from 'react-native-google-mobile-ads';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -51,9 +54,49 @@ function MainTabs() {
   );
 }
 
+// Ads Mở Ứng Dụng
+const adUnitId = __DEV__
+    ? TestIds.APP_OPEN
+    : 'ca-app-pub-7354264038097352/1788859460';
+
+// thời gian chờ (ví dụ 10 phút)
+const MIN_INTERVAL = 3 * 60 * 1000;
+
 export default function App() {
     useEffect(() => {
-        checkVersion();
+        const initAd = async () => {
+            const needUpdate = await checkVersion();
+
+            if (needUpdate) {
+                return; // ❌ không show ads
+            }
+
+            const lastShown = await AsyncStorage.getItem('last_ad_time');
+            const now = Date.now();
+
+            if (lastShown && now - parseInt(lastShown) < MIN_INTERVAL) {
+                console.log('Không show ads (chưa đủ thời gian)');
+                return;
+            }
+
+            const ad = AppOpenAd.createForAdRequest(adUnitId);
+
+            const listener = ad.addAdEventListener(AdEventType.LOADED, async () => {
+                ad.show();
+
+                // lưu thời gian đã show
+                await AsyncStorage.setItem('last_ad_time', now.toString());
+            });
+
+            ad.load();
+
+            return () => {
+                listener();
+            };
+        };
+
+        initAd();
+
     }, []);
 
   return (
@@ -77,6 +120,7 @@ export default function App() {
               <Stack.Screen name="BookTacGia" component={BookTacGia} />
               <Stack.Screen name="BookCategory" component={BookCategory} />
               <Stack.Screen name="FavoriteScreen" component={FavoriteScreen} />
+              <Stack.Screen name="RateBook" component={RateBook} />
             </Stack.Navigator>
           </NavigationContainer>
         </View>

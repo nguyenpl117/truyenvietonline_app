@@ -18,6 +18,30 @@ import HeaderLight from "./HeaderLight";
 import {addViewedStory} from "./viewedStories";
 const { width } = Dimensions.get('window');
 
+import { BannerAd, BannerAdSize, InterstitialAd, TestIds, AdEventType } from 'react-native-google-mobile-ads';
+
+const adUnitId = __DEV__
+    ? TestIds.INTERSTITIAL
+    : 'ca-app-pub-7354264038097352/9513194409';
+
+const adUnitIdBanner = __DEV__
+    ? TestIds.BANNER
+    : 'ca-app-pub-7354264038097352/8131740686';
+
+const interstitial = InterstitialAd.createForAdRequest(adUnitId);
+
+let isLoaded = false;
+
+interstitial.addAdEventListener(AdEventType.LOADED, () => {
+  isLoaded = true;
+});
+interstitial.addAdEventListener(AdEventType.CLOSED, () => {
+  isLoaded = false;
+});
+
+
+
+
 export default function Reading({ route, navigation }) {
 
   const { book, chapter: initialChapter } = route.params;
@@ -81,6 +105,21 @@ export default function Reading({ route, navigation }) {
   };
 
 
+  const showInterstitial = () => {
+    if (isLoaded) {
+      interstitial.show();
+    } else {
+      const unsubscribe = interstitial.addAdEventListener(
+          AdEventType.LOADED,
+          () => {
+            interstitial.show();
+            unsubscribe();
+          }
+      );
+      interstitial.load();
+    }
+  };
+
 
   const scrollRef = useRef(null);
   const [playing, setPlaying] = useState(false);
@@ -88,6 +127,25 @@ export default function Reading({ route, navigation }) {
   const intervalRef = useRef(null);
   const [visible, setVisible] = useState(false);
 
+
+  const hasShownAd = useRef(false);
+
+  const handleScroll = (event) => {
+    if (!detail) return;
+    const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+
+    const currentY = contentOffset.y;
+    const totalHeight = contentSize.height - layoutMeasurement.height;
+
+    const percent = currentY / totalHeight;
+    const isEvenChapter = detail.chapter_number % 2 === 0;
+    if ( percent > 0.4 &&
+        !hasShownAd.current &&
+        detail?.chapter_number % 2 === 0) {
+      hasShownAd.current = true;
+      showInterstitial();
+    }
+  };
   const openModal = (id) => {
     setVisible(true);  // mở modal
   };
@@ -139,6 +197,60 @@ export default function Reading({ route, navigation }) {
     fetchDetail();
   }, [chapter.id]);
 
+
+  const renderContentWithAds = () => {
+    if (!detail?.content) return null;
+
+    const parts = detail.content.split('</p>');
+
+    return parts.map((part, index) => {
+      const html = part + '</p>';
+
+      return (
+          <React.Fragment key={index}>
+            <RenderHTML
+                contentWidth={width}
+                source={{ html: html }}
+                tagsStyles={tagsStyles}
+                renderersProps={{
+                  text: { selectable: true },
+                  img: {
+                    enableExperimentalPercentWidth: true
+                  }
+                }}
+                classesStyles={classesStyles}
+            />
+
+            {/* 👉 chèn banner sau đoạn thứ 3 */}
+            {(index === 2) && (
+                <View style={{ alignItems: 'center', marginVertical: 20 }}>
+                  <BannerAd
+                      unitId={adUnitIdBanner}
+                      size={BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER}
+                  />
+                </View>
+            )}
+            {(index === 12) && (
+                <View style={{ alignItems: 'center', marginVertical: 20 }}>
+                  <BannerAd
+                      unitId={adUnitIdBanner}
+                      size={BannerAdSize.LARGE_BANNER}
+                  />
+                </View>
+            )}
+            {(index === 28) && (
+                <View style={{ alignItems: 'center', marginVertical: 20 }}>
+                  <BannerAd
+                      unitId={adUnitIdBanner}
+                      size={BannerAdSize.INLINE_ADAPTIVE_BANNER}
+                  />
+                </View>
+            )}
+          </React.Fragment>
+      );
+    });
+  };
+
   if (loading) {
     return (
         <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
@@ -153,6 +265,7 @@ export default function Reading({ route, navigation }) {
       <ScrollView showsVerticalScrollIndicator={false} onTouchStart={stopAutoScroll}  ref={scrollRef}
                   onScroll={(e) => {
                     scrollY.current = e.nativeEvent.contentOffset.y;
+                    handleScroll(e)
                   }}
                   scrollEventThrottle={16}>
 
@@ -165,18 +278,17 @@ export default function Reading({ route, navigation }) {
 
         {/* Story Content */}
         <View style={styles.contentArea}>
-          <RenderHTML
-              contentWidth={width}
-              source={{ html: detail.content.replace(/<p[^>]*>(\s|&nbsp;)*<\/p>/g, '').trim() }}
-              tagsStyles={tagsStyles}
-              renderersProps={{
-                text: { selectable: true },
-                img: {
-                  enableExperimentalPercentWidth: true
-                }
-              }}
-              classesStyles={classesStyles}
-          />
+          {renderContentWithAds()}
+          <View style={{ alignItems: 'center', marginVertical: 20 }}>
+            <BannerAd
+                unitId={adUnitIdBanner}
+                size={BannerAdSize.MEDIUM_RECTANGLE}
+                requestOptions={{
+                  requestNonPersonalizedAdsOnly: true,
+                }}
+            />
+          </View>
+
         </View>
         
         <View style={{ height: 100 }} />

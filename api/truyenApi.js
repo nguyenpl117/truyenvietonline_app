@@ -153,7 +153,7 @@ export const searchTruyen = async (query, page = 1) => {
 // 3️⃣ Tìm kiếm truyện
 export const authorTruyen = async (id, page = 1) => {
     try {
-        const response = await fetch(`${baseUrl}/author/${id}?page=${page}`, { headers });
+        const response = await fetch(`${baseUrl}/author/${id}?page=${page}&v=4`, { headers });
 
         if (!response.ok) {
             const errorData = await response.json();
@@ -232,12 +232,33 @@ export const getTheLoaiDetail = async (id) => {
 };
 
 
-export const getTopTruyen = async (id) => {
+export const getTopTruyen = async () => {
     try {
         // const cached = getTruyenTheLoaiCache(id);
         // if (cached) return cached;
 
         const response = await fetch(`${baseUrl}/top-truyen`, { headers });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Lỗi ${response.status}: ${errorData.message || 'Không lấy được dữ liệu'}`);
+        }
+        const data = await response.json();
+        // setTruyenTheLoaiCache(id, data);
+        return data;
+
+    } catch (error) {
+        console.error('searchTruyen1 lỗi:', error.message);
+        throw error;
+    }
+};
+
+export const getTopTruyenRate = async () => {
+    try {
+        // const cached = getTruyenTheLoaiCache(id);
+        // if (cached) return cached;
+
+        const response = await fetch(`${baseUrl}/top?v=2`, { headers });
 
         if (!response.ok) {
             const errorData = await response.json();

@@ -6,6 +6,7 @@ import Header from "./Header";
 import SelectTheLoaiDropdown from "./SelectTheLoai";
 import {getTheLoai, getTheLoaiDetail} from "../api/truyenApi";
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import {BannerAd, BannerAdSize} from "react-native-google-mobile-ads";
 const { width } = Dimensions.get('window');
 
 
@@ -59,7 +60,7 @@ export default function Home({ navigation }) {
 
         <ScrollView style={styles.container} nestedScrollEnabled={true}>
           <View style={styles.boxTop}>
-            <TouchableOpacity style={styles.itemTop}>
+            <TouchableOpacity style={styles.itemTop}  onPress={() => navigation.navigate('RateBook')}>
               <Ionicons name="star-sharp" size={22} color="#1e40af" />
               <Text style={styles.itemTopText}>Đánh Giá</Text>
             </TouchableOpacity>
@@ -71,7 +72,7 @@ export default function Home({ navigation }) {
               <Ionicons name="stats-chart-outline" size={22} color="#1e40af" />
               <Text style={styles.itemTopText}>Đọc Nhiều</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.itemTop}>
+            <TouchableOpacity style={styles.itemTop} onPress={() => navigation.navigate('Ranking')}>
               <Ionicons name="pulse-outline" size={22} color="#1e40af" />
               <Text  style={styles.itemTopText}>Thịnh Hành</Text>
             </TouchableOpacity>
@@ -80,6 +81,18 @@ export default function Home({ navigation }) {
             <SelectTheLoaiDropdown onChange={(termId) => fetchTheLoaiDetail(termId)} />
           </View>
           {theloai && renderBookSection(theloaiSelect.label, theloai, '#f1f5f9')}
+
+
+
+          <View style={{ alignItems: 'center', marginVertical: 20 }}>
+            <BannerAd
+                unitId="ca-app-pub-7354264038097352/8131740686" // test or real id
+                size={BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER}
+                requestOptions={{
+                  requestNonPersonalizedAdsOnly: true,
+                }}
+            />
+          </View>
 
         </ScrollView>
       </View>

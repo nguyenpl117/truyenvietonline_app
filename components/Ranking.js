@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, Image, FlatList, TouchableOpacity, ScrollView }
 import { Ionicons } from '@expo/vector-icons';
 import {getChapterDetail, getTopTruyen, searchTruyen} from "../api/truyenApi";
 import {addViewedStory} from "./viewedStories";
-
+import {BannerAd, BannerAdSize} from "react-native-google-mobile-ads";
 const RANK_TABS = [
   { id: 'views', title: 'Lượt đọc' },
   // { id: 'nominations', title: 'Đề cử' },
@@ -120,11 +120,28 @@ export default function Ranking({ navigation }) {
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
       />
+
+      {/* Banner Ad sticky bottom */}
+      <View style={styles.banner}>
+        <BannerAd
+            unitId="ca-app-pub-7354264038097352/8131740686" // test or real id
+            size={BannerAdSize.BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true,
+            }}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  banner: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',

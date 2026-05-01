@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Image, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {getViewedStories} from "./viewedStories";
+import {BannerAd, BannerAdSize} from "react-native-google-mobile-ads";
 
 const { width } = Dimensions.get('window');
 
@@ -72,11 +73,27 @@ export default function Library({ navigation }) {
           </View>
         }
       />
+      {/* Banner Ad sticky bottom */}
+      <View style={styles.banner}>
+        <BannerAd
+            unitId="ca-app-pub-7354264038097352/8131740686" // test or real id
+            size={BannerAdSize.BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true,
+            }}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  banner: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    alignItems: "center",
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -170,8 +187,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
-    marginTop: 15,
+    marginTop: 35,
     color: '#94a3b8',
     fontSize: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
   },
 });

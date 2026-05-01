@@ -15,9 +15,7 @@ export const checkVersion = async () => {
         const data = await res.json();
 
         const currentBuild = DeviceInfo.getVersion();
-        console.log(data.latest_version)
-        console.log(currentBuild)
-        // ❌ nếu khác version → bắt update luôn
+
         if (currentBuild !== data.latest_version) {
             Alert.alert(
                 "Cập nhật bắt buộc",
@@ -30,9 +28,15 @@ export const checkVersion = async () => {
                 ],
                 { cancelable: false }
             );
+
+            return true; // ✅ cần update
         }
+
+        return false; // ✅ không cần update
 
     } catch (e) {
         console.log("Check version error:", e);
+        return false; // fallback: vẫn cho chạy app
     }
 };
+

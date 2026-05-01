@@ -5,6 +5,7 @@ const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 45) / 3; // 2 columns with padding
 
 export default function BookCard({ book }) {
+  console.log(book)
   return (
     <View style={styles.container} activeOpacity={0.8}>
       <View style={styles.imageWrapper}>
