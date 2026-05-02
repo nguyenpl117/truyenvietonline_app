@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Image, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {getViewedStories} from "./viewedStories";
-import {BannerAd, BannerAdSize} from "react-native-google-mobile-ads";
+import {BannerAd, BannerAdSize, TestIds} from "react-native-google-mobile-ads";
 
 const { width } = Dimensions.get('window');
-
+const adUnitIdBanner = __DEV__
+    ? TestIds.BANNER
+    : 'ca-app-pub-7354264038097352/8131740686';
 
 export default function Library({ navigation }) {
   const [activeTab, setActiveTab] = useState('history'); // 'history' or 'bookmark'
@@ -76,7 +78,7 @@ export default function Library({ navigation }) {
       {/* Banner Ad sticky bottom */}
       <View style={styles.banner}>
         <BannerAd
-            unitId="ca-app-pub-7354264038097352/8131740686" // test or real id
+               unitId={adUnitIdBanner} // test or real id
             size={BannerAdSize.BANNER}
             requestOptions={{
               requestNonPersonalizedAdsOnly: true,

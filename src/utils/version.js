@@ -15,7 +15,8 @@ export const checkVersion = async () => {
         const data = await res.json();
 
         const currentBuild = DeviceInfo.getVersion();
-
+        console.log(data)
+        console.log('currentBuild', currentBuild)
         if (currentBuild !== data.latest_version) {
             Alert.alert(
                 "Cập nhật bắt buộc",

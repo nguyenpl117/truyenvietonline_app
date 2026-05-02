@@ -17,10 +17,12 @@ import {favoriteTruyenDetail, getTruyenDetail} from "../api/truyenApi";
 import RenderHTML from 'react-native-render-html';
 import ChapterModal from "./ChapterModal";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {BannerAd, BannerAdSize} from "react-native-google-mobile-ads";
+import {BannerAd, BannerAdSize, TestIds} from "react-native-google-mobile-ads";
 
 const { width } = Dimensions.get('window');
-
+const adUnitIdBanner = __DEV__
+    ? TestIds.BANNER
+    : 'ca-app-pub-7354264038097352/8131740686';
 
 export default function BookDetail({ route, navigation }) {
   const { book } = route.params;
@@ -257,7 +259,7 @@ export default function BookDetail({ route, navigation }) {
 
             <View style={{ alignItems: 'center', marginVertical: 20 }}>
               <BannerAd
-                  unitId="ca-app-pub-7354264038097352/8131740686" // test or real id
+                     unitId={adUnitIdBanner} // test or real id
                   size={BannerAdSize.BANNER}
                   requestOptions={{
                     requestNonPersonalizedAdsOnly: true,

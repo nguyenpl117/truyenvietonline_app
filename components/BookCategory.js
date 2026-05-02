@@ -3,8 +3,10 @@ import { StyleSheet, View, Text, Image, FlatList, TouchableOpacity, SafeAreaView
 import { Ionicons } from '@expo/vector-icons';
 import HeaderLight from "./HeaderLight";
 import {categoryTruyen} from "../api/truyenApi";
-import {BannerAd, BannerAdSize} from "react-native-google-mobile-ads";
-
+import {BannerAd, BannerAdSize, TestIds} from "react-native-google-mobile-ads";
+const adUnitIdBanner = __DEV__
+    ? TestIds.BANNER
+    : 'ca-app-pub-7354264038097352/8131740686';
 const COLOR = ['#ef4444', '#10b981', '#f59e0b']
 export default function BookCategory({ route, navigation }) {
   const { category } = route.params;
@@ -115,7 +117,7 @@ export default function BookCategory({ route, navigation }) {
         {/* Banner Ad sticky bottom */}
         <View style={styles.banner}>
           <BannerAd
-              unitId="ca-app-pub-7354264038097352/8131740686" // test or real id
+                 unitId={adUnitIdBanner} // test or real id
               size={BannerAdSize.BANNER}
               requestOptions={{
                 requestNonPersonalizedAdsOnly: true,

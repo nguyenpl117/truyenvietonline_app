@@ -7,9 +7,11 @@ import {
 } from 'react-native';
 import BookCard from "./BookCard";
 import HeaderLight from "./HeaderLight";
-import {BannerAd, BannerAdSize} from "react-native-google-mobile-ads";
+import {BannerAd, BannerAdSize, TestIds} from "react-native-google-mobile-ads";
 import {getTopTruyenRate} from "../api/truyenApi";
-
+const adUnitIdBanner = __DEV__
+    ? TestIds.BANNER
+    : 'ca-app-pub-7354264038097352/8131740686';
 const RateBook = ({ navigation }) => {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -46,7 +48,7 @@ const RateBook = ({ navigation }) => {
                 {/* Banner Ad sticky bottom */}
                 <View style={styles.banner}>
                     <BannerAd
-                        unitId="ca-app-pub-7354264038097352/8131740686" // test or real id
+                           unitId={adUnitIdBanner} // test or real id
                         size={BannerAdSize.BANNER}
                         requestOptions={{
                             requestNonPersonalizedAdsOnly: true,
@@ -85,7 +87,7 @@ const RateBook = ({ navigation }) => {
         {/* Banner Ad sticky bottom */}
         <View style={styles.banner}>
             <BannerAd
-                unitId="ca-app-pub-7354264038097352/8131740686" // test or real id
+                   unitId={adUnitIdBanner} // test or real id
                 size={BannerAdSize.BANNER}
                 requestOptions={{
                     requestNonPersonalizedAdsOnly: true,

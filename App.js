@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { StyleSheet, View, AppState } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Home from './components/Home';
 import BookDetail from './components/BookDetail';
@@ -20,6 +20,7 @@ import FavoriteScreen from "./components/FavoriteScreen";
 import RateBook from "./components/RateBook";
 import {checkVersion} from "./src/utils/version";
 import { AppOpenAd, TestIds, AdEventType } from 'react-native-google-mobile-ads';
+import mobileAds from 'react-native-google-mobile-ads';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
@@ -64,38 +65,60 @@ const MIN_INTERVAL = 3 * 60 * 1000;
 
 export default function App() {
     useEffect(() => {
-        const initAd = async () => {
-            const needUpdate = await checkVersion();
 
-            if (needUpdate) {
-                return; // ❌ không show ads
+        let adListener;
+
+        const init = async () => {
+            try {
+                // 1. INIT ADMOB
+                await mobileAds().initialize();
+                console.log('AdMob initialized');
+
+                // 2. CHECK VERSION
+                const needUpdate = await checkVersion();
+                if (needUpdate) return;
+
+                // 3. CHECK TIME INTERVAL
+                const lastShown = await AsyncStorage.getItem('last_ad_time');
+                const now = Date.now();
+
+                if (lastShown && now - parseInt(lastShown) < MIN_INTERVAL) {
+                    console.log('Skip ad (too soon)');
+                    return;
+                }
+
+                // 4. CREATE AD
+                const ad = AppOpenAd.createForAdRequest(adUnitId);
+
+                // 5. LISTENER
+                adListener = ad.addAdEventListener(
+                    AdEventType.LOADED,
+                    async () => {
+                        await ad.show();
+
+                        await AsyncStorage.setItem(
+                            'last_ad_time',
+                            now.toString()
+                        );
+                    }
+                );
+
+                // 6. LOAD AD
+                ad.load();
+
+            } catch (err) {
+                console.log('Ad error:', err);
             }
-
-            const lastShown = await AsyncStorage.getItem('last_ad_time');
-            const now = Date.now();
-
-            if (lastShown && now - parseInt(lastShown) < MIN_INTERVAL) {
-                console.log('Không show ads (chưa đủ thời gian)');
-                return;
-            }
-
-            const ad = AppOpenAd.createForAdRequest(adUnitId);
-
-            const listener = ad.addAdEventListener(AdEventType.LOADED, async () => {
-                ad.show();
-
-                // lưu thời gian đã show
-                await AsyncStorage.setItem('last_ad_time', now.toString());
-            });
-
-            ad.load();
-
-            return () => {
-                listener();
-            };
         };
 
-        initAd();
+        init();
+
+        // CLEANUP
+        return () => {
+            if (adListener) {
+                adListener();
+            }
+        };
 
     }, []);
 

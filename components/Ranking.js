@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import { StyleSheet, View, Text, Image, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import {getChapterDetail, getTopTruyen, searchTruyen} from "../api/truyenApi";
-import {addViewedStory} from "./viewedStories";
-import {BannerAd, BannerAdSize} from "react-native-google-mobile-ads";
+import {getTopTruyen} from "../api/truyenApi";
+import {BannerAd, BannerAdSize, TestIds} from "react-native-google-mobile-ads";
 const RANK_TABS = [
   { id: 'views', title: 'Lượt đọc' },
   // { id: 'nominations', title: 'Đề cử' },
@@ -11,7 +10,9 @@ const RANK_TABS = [
   // { id: 'unlock', title: 'Mở khóa' },
   // { id: 'rewards', title: 'Tặng thưởng' },
 ];
-
+const adUnitIdBanner = __DEV__
+    ? TestIds.BANNER
+    : 'ca-app-pub-7354264038097352/8131740686';
 const COLOR = ['#ef4444', '#10b981', '#f59e0b']
 
 export default function Ranking({ navigation }) {
@@ -124,7 +125,7 @@ export default function Ranking({ navigation }) {
       {/* Banner Ad sticky bottom */}
       <View style={styles.banner}>
         <BannerAd
-            unitId="ca-app-pub-7354264038097352/8131740686" // test or real id
+            unitId={adUnitIdBanner}
             size={BannerAdSize.BANNER}
             requestOptions={{
               requestNonPersonalizedAdsOnly: true,

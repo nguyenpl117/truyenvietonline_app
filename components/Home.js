@@ -6,9 +6,11 @@ import Header from "./Header";
 import SelectTheLoaiDropdown from "./SelectTheLoai";
 import {getTheLoai, getTheLoaiDetail} from "../api/truyenApi";
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import {BannerAd, BannerAdSize} from "react-native-google-mobile-ads";
+import {BannerAd, BannerAdSize, TestIds} from "react-native-google-mobile-ads";
 const { width } = Dimensions.get('window');
-
+const adUnitIdBanner = __DEV__
+    ? TestIds.BANNER
+    : 'ca-app-pub-7354264038097352/8131740686';
 
 export default function Home({ navigation }) {
 
@@ -86,7 +88,7 @@ export default function Home({ navigation }) {
 
           <View style={{ alignItems: 'center', marginVertical: 20 }}>
             <BannerAd
-                unitId="ca-app-pub-7354264038097352/8131740686" // test or real id
+                   unitId={adUnitIdBanner} // test or real id
                 size={BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER}
                 requestOptions={{
                   requestNonPersonalizedAdsOnly: true,
