@@ -61,7 +61,7 @@ const adUnitId = __DEV__
     : 'ca-app-pub-7354264038097352/1788859460';
 
 // thời gian chờ (ví dụ 10 phút)
-const MIN_INTERVAL = 3 * 60 * 1000;
+const MIN_INTERVAL = 2 * 24 * 60 * 60 * 1000;
 
 export default function App() {
     useEffect(() => {
