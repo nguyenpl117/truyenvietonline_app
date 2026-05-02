@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { StyleSheet, View } from 'react-native';
+import {Alert, Linking, StyleSheet, View} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Home from './components/Home';
 import BookDetail from './components/BookDetail';
