@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { getTheLoai } from '../api/truyenApi';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const CACHE_KEY = 'THE_LOAI_CACHE';
+const CACHE_TIME = 1000 * 60 * 60 * 24; // 24h
 
 const SelectTheLoaiDropdown = ({ onChange }) => {
     const [open, setOpen] = useState(false);
@@ -13,8 +17,43 @@ const SelectTheLoaiDropdown = ({ onChange }) => {
     useEffect(() => {
         const fetchTheLoai = async () => {
             try {
+                // 🔹 1. Check cache trước
+                const cache = await AsyncStorage.getItem(CACHE_KEY);
+
+                if (cache) {
+                    const parsed = JSON.parse(cache);
+
+                    // kiểm tra còn hạn không
+                    if (Date.now() - parsed.timestamp < CACHE_TIME) {
+                        const dropdownItems = parsed.data.map((theLoai) => ({
+                            label: theLoai.name,
+                            value: theLoai.term_id,
+                        }));
+
+                        setItems(dropdownItems);
+
+                        if (dropdownItems.length > 0) {
+                            setSelected(dropdownItems[0].value);
+                            if (onChange) onChange(dropdownItems[0]);
+                        }
+
+                        console.log('✅ Load từ cache');
+                        return;
+                    }
+                }
+
+
                 const data = await getTheLoai();
-                console.log(data.length)
+
+                // lưu cache
+                await AsyncStorage.setItem(
+                    CACHE_KEY,
+                    JSON.stringify({
+                        data,
+                        timestamp: Date.now(),
+                    })
+                );
+
                 const dropdownItems = data.map((theLoai) => ({
                     label: `${theLoai.name}`,
                     value: theLoai.term_id,

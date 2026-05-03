@@ -15,7 +15,10 @@ const token = Buffer.from(`${username}:${appPassword}`).toString('base64');
 
 const headers = {
     'Authorization': `Basic ${token}`,
-    'Accept': 'application/json'
+    'Accept': 'application/json',
+    'User-Agent': 'Mozilla/5.0 (Linux; Android 10)',
+    'Referer': 'https://truyenvietonline.com',
+    'Connection': 'keep-alive'
 };
 
 // 1️⃣ Yeu thich truyen
