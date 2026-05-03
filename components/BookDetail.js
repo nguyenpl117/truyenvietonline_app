@@ -9,7 +9,7 @@ import {
   Dimensions,
   Linking,
   Pressable,
-  LayoutAnimation
+  LayoutAnimation, Platform
 } from 'react-native';
 import { Ionicons, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import HeaderLight from "./HeaderLight";
@@ -22,7 +22,9 @@ import {BannerAd, BannerAdSize, TestIds} from "react-native-google-mobile-ads";
 const { width } = Dimensions.get('window');
 const adUnitIdBanner = __DEV__
     ? TestIds.BANNER
-    : 'ca-app-pub-7354264038097352/8131740686';
+    : Platform.OS === 'ios'
+        ? 'ca-app-pub-7354264038097352/4880026850'
+        : 'ca-app-pub-7354264038097352/8131740686';
 
 export default function BookDetail({ route, navigation }) {
   const { book } = route.params;

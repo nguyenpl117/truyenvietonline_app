@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import {Alert, Linking, StyleSheet, View} from 'react-native';
+import {Alert, Linking, Platform, StyleSheet, View} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Home from './components/Home';
 import BookDetail from './components/BookDetail';
@@ -56,9 +56,14 @@ function MainTabs() {
 }
 
 // Ads Mở Ứng Dụng
+
 const adUnitId = __DEV__
     ? TestIds.APP_OPEN
-    : 'ca-app-pub-7354264038097352/1788859460';
+    : Platform.OS === 'ios'
+        ? 'ca-app-pub-7354264038097352/9875309022'
+        : 'ca-app-pub-7354264038097352/1788859460';
+
+ca-app-pub-7354264038097352/9875309022
 
 // thời gian chờ (ví dụ 10 phút)
 const MIN_INTERVAL = 2 * 24 * 60 * 60 * 1000;

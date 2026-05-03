@@ -6,9 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  Pressable,
-  Linking,
-  Modal
+  Platform
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import {getChapterDetail} from "../api/truyenApi";
@@ -20,13 +18,19 @@ const { width } = Dimensions.get('window');
 
 import { BannerAd, BannerAdSize, InterstitialAd, TestIds, AdEventType } from 'react-native-google-mobile-ads';
 
+
 const adUnitId = __DEV__
     ? TestIds.INTERSTITIAL
-    : 'ca-app-pub-7354264038097352/9513194409';
+    : Platform.OS === 'ios'
+        ? 'ca-app-pub-7354264038097352/9374506338'
+        : 'ca-app-pub-7354264038097352/9513194409';
 
 const adUnitIdBanner = __DEV__
     ? TestIds.BANNER
-    : 'ca-app-pub-7354264038097352/8131740686';
+    : Platform.OS === 'ios'
+        ? 'ca-app-pub-7354264038097352/4880026850'
+        : 'ca-app-pub-7354264038097352/8131740686';
+
 
 const interstitial = InterstitialAd.createForAdRequest(adUnitId);
 

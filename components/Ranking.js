@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { StyleSheet, View, Text, Image, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import {StyleSheet, View, Text, Image, FlatList, TouchableOpacity, ScrollView, Platform} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {getTopTruyen} from "../api/truyenApi";
 import {BannerAd, BannerAdSize, TestIds} from "react-native-google-mobile-ads";
@@ -12,7 +12,9 @@ const RANK_TABS = [
 ];
 const adUnitIdBanner = __DEV__
     ? TestIds.BANNER
-    : 'ca-app-pub-7354264038097352/8131740686';
+    : Platform.OS === 'ios'
+        ? 'ca-app-pub-7354264038097352/4880026850'
+        : 'ca-app-pub-7354264038097352/8131740686';
 const COLOR = ['#ef4444', '#10b981', '#f59e0b']
 
 export default function Ranking({ navigation }) {

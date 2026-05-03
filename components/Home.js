@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
+import {StyleSheet, View, Text, ScrollView, TouchableOpacity, Dimensions, Platform} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import BookCard from './BookCard';
 import Header from "./Header";
@@ -10,7 +10,9 @@ import {BannerAd, BannerAdSize, TestIds} from "react-native-google-mobile-ads";
 const { width } = Dimensions.get('window');
 const adUnitIdBanner = __DEV__
     ? TestIds.BANNER
-    : 'ca-app-pub-7354264038097352/8131740686';
+    : Platform.OS === 'ios'
+        ? 'ca-app-pub-7354264038097352/4880026850'
+        : 'ca-app-pub-7354264038097352/8131740686';
 
 export default function Home({ navigation }) {
 

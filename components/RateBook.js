@@ -3,7 +3,7 @@ import {
     View,
     Text,
     TouchableOpacity,
-    StyleSheet, ScrollView
+    StyleSheet, ScrollView, Platform
 } from 'react-native';
 import BookCard from "./BookCard";
 import HeaderLight from "./HeaderLight";
@@ -11,7 +11,9 @@ import {BannerAd, BannerAdSize, TestIds} from "react-native-google-mobile-ads";
 import {getTopTruyenRate} from "../api/truyenApi";
 const adUnitIdBanner = __DEV__
     ? TestIds.BANNER
-    : 'ca-app-pub-7354264038097352/8131740686';
+    : Platform.OS === 'ios'
+        ? 'ca-app-pub-7354264038097352/4880026850'
+        : 'ca-app-pub-7354264038097352/8131740686';
 const RateBook = ({ navigation }) => {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);

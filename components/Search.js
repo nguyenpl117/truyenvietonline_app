@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   TextInput,
-  ActivityIndicator
+  ActivityIndicator, Platform
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {searchTruyen} from "../api/truyenApi";
@@ -16,7 +16,9 @@ import {BannerAd, BannerAdSize, TestIds} from "react-native-google-mobile-ads";
 const COLOR = ['#ef4444', '#10b981', '#f59e0b']
 const adUnitIdBanner = __DEV__
     ? TestIds.BANNER
-    : 'ca-app-pub-7354264038097352/8131740686';
+    : Platform.OS === 'ios'
+        ? 'ca-app-pub-7354264038097352/4880026850'
+        : 'ca-app-pub-7354264038097352/8131740686';
 export default function Search({ route, navigation }) {
 
   const [keyword, setKeyword] = useState('');
