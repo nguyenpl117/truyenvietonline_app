@@ -9,7 +9,7 @@ import {
   Platform
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import {getChapterDetail} from "../api/truyenApi";
+import {getChapterDetail, increaseView} from "../api/truyenApi";
 import RenderHTML from "react-native-render-html";
 import ChapterModal from './ChapterModal';
 import HeaderLight from "./HeaderLight";
@@ -64,48 +64,6 @@ export default function Reading({ route, navigation }) {
     h1: { fontSize: fontSize * 1.4, fontWeight: 'bold' },
     h2: { fontSize: fontSize * 1.2, fontWeight: 'bold' },
     h3: { fontSize: fontSize * 1.1, fontWeight: 'bold' }
-  };
-
-  const classesStyles = {
-    'img': {
-      maxWidth: '50%',
-      marginBottom: 30,
-      height: 120,
-      resizeMode: 'contain',
-      borderRadius: 8,
-    },
-    'shopee-soft': {
-      marginVertical: 20,
-    },
-
-    'shopee-hook': {
-      marginVertical: 20,
-    },
-
-    'shopee-deal': {
-      marginVertical: 25,
-      alignItems: 'center', // thay cho text-align: center
-    },
-
-    'deal-box': {
-      backgroundColor: '#fff3f0',
-      padding: 10,
-      borderRadius: 8,
-    },
-
-    'shopee-story': {
-      // không có style riêng ngoài link
-    },
-    'deal-link': {
-      color: '#ee4d2d',
-      fontWeight: 'bold',
-      textDecorationLine: 'none',
-    },
-    'story-link': {
-      color: '#888',
-      fontStyle: 'italic',
-      textDecorationLine: 'none',
-    }
   };
 
 
@@ -199,6 +157,19 @@ export default function Reading({ route, navigation }) {
       }
     };
     fetchDetail();
+
+    if(chapter.id){
+      // delay 10s
+      const timer = setTimeout(() => {
+        console.log("chapter.id", chapter.id)
+        increaseView(chapter.id);
+
+      }, 10000);
+
+      // cleanup
+      return () => clearTimeout(timer);
+    }
+
   }, [chapter.id]);
 
 
@@ -222,7 +193,6 @@ export default function Reading({ route, navigation }) {
                     enableExperimentalPercentWidth: true
                   }
                 }}
-                classesStyles={classesStyles}
             />
 
             {/* 👉 chèn banner sau đoạn thứ 3 */}

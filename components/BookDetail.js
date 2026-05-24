@@ -9,15 +9,17 @@ import {
   Dimensions,
   Linking,
   Pressable,
-  LayoutAnimation, Platform
+  LayoutAnimation, Platform, Alert
 } from 'react-native';
-import { Ionicons, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import HeaderLight from "./HeaderLight";
-import {favoriteTruyenDetail, getTruyenDetail} from "../api/truyenApi";
+import {favoriteTruyenDetail} from "../api/truyenApi";
 import RenderHTML from 'react-native-render-html';
 import ChapterModal from "./ChapterModal";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {BannerAd, BannerAdSize, TestIds} from "react-native-google-mobile-ads";
+import {checkLogin, getToken, getTruyenDetail, getUser, toggleStoryNotification} from "../api/truyenApiAuth";
+import Toast from "react-native-toast-message";
 
 const { width } = Dimensions.get('window');
 const adUnitIdBanner = __DEV__
@@ -36,6 +38,8 @@ export default function BookDetail({ route, navigation }) {
   const [textColor, setTextColor] = useState('#000'); // mặc định đen
   const [visible, setVisible] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [checkLog, setCheckLog] = useState(false);
+  const [enabled, setEnabled] = useState(false);
   const openModal = (id) => {
     setVisible(true);  // mở modal
   };
@@ -57,6 +61,55 @@ export default function BookDetail({ route, navigation }) {
     if (success) {
       setLiked(true);
     }
+  };
+  const handleNotification = async () => {
+    try {
+      if(!checkLog){
+
+        Alert.alert(
+            'Đăng nhập',
+            'Bạn đăng nhập để đăng ký nhận thông báo!',
+            [
+              {
+                text: 'Đăng nhập',
+                onPress: () => {navigation.navigate("LoginScreen");},
+              },
+            ]
+        );
+
+
+      }
+
+      const res = await toggleStoryNotification(detail.id, !enabled);
+
+      if(res.success){
+        Toast.show({
+          type: 'success',
+          text1: 'Thành công',
+          text2: res.message,
+        });
+        setEnabled(true)
+      }else {
+        Toast.show({
+          type: 'error',
+          text1: 'Thông báo',
+          text2: res.message,
+        });
+      }
+
+    } catch (error) {
+
+      Toast.show({
+        type: 'error',
+        text1: 'Lỗi',
+        text2: error.message,
+      });
+
+    }
+  };
+
+  const showRatting = async (truyen) => {
+
   };
 
   const addToFavorite = async (truyen) => {
@@ -104,9 +157,12 @@ export default function BookDetail({ route, navigation }) {
   useEffect(() => {
     const fetchDetail = async () => {
       try {
+        const auth = await checkLogin();
+        console.log("auth", auth)
+        setCheckLog(auth)
         const data = await getTruyenDetail(book.id); // make sure book.id exists
-        console.log("data", data);
         setDetail(data);
+        setEnabled(data.notification_enabled);
       } catch (error) {
         console.error(error);
       } finally {
@@ -120,7 +176,11 @@ export default function BookDetail({ route, navigation }) {
       setLiked(result);
     };
     check();
+
   }, [book.id]);
+
+
+
 
   if (loading) {
     return (
@@ -166,16 +226,16 @@ export default function BookDetail({ route, navigation }) {
                             key={star}
                             name="star"
                             size={16}
-                            color={star <= detail.avg ? "#fbbf24" : "#d1d5db"} // vàng : xám
+                            color={star <= detail.rating.avg ? "#fbbf24" : "#d1d5db"} // vàng : xám
                             style={{ marginRight: 2 }}
                         />
                     ))}
                   </View>
-                  {detail.count ? (
+                  {detail.rating.total ? (
                       <Text style={styles.ratingText}>
                         Đánh giá:
-                        <Text style={styles.ratingBold}> {detail.avg}/10 từ</Text>
-                        <Text style={styles.ratingBold}> {detail.count} lượt</Text>
+                        <Text style={styles.ratingBold}> {detail.rating.avg}/10 từ</Text>
+                        <Text style={styles.ratingBold}> {detail.rating.total} lượt</Text>
                       </Text>
                   ) : (
                       <Text style={styles.ratingText}>Chưa có đánh giá</Text>
@@ -184,7 +244,8 @@ export default function BookDetail({ route, navigation }) {
                 </View>
 
                 <View style={styles.coverWrapper}>
-                  <Image source={{ uri: detail.thumbnail }} style={styles.cover} resizeMode="cover" />
+                  <Image source={{ uri:  detail?.thumbnail && detail.thumbnail.trim() !== ''
+                        ? detail.thumbnail : 'https://truyenvietonline.com/wp-content/themes/truyenviet/assets/images/logo-truyen-viet-online.png' }} style={styles.cover} resizeMode="cover" />
                   <View style={styles.coverShadow} />
                 </View>
               </View>
@@ -221,10 +282,15 @@ export default function BookDetail({ route, navigation }) {
                 <TouchableOpacity style={styles.itemAction} onPress={() => handleFavorite(detail)}>
                   <Ionicons name={liked ? "heart" : "heart-outline"} size={18} color="#01a3d0" />
                 </TouchableOpacity>
+                <TouchableOpacity style={styles.itemAction} onPress={() => navigation.navigate("RatingComment", { truyen: detail, checkLog: checkLog })}>
+                  <Ionicons name="chatbox-ellipses-outline" size={18} color="#01a3d0" />
+                </TouchableOpacity>
 
-                {/*<TouchableOpacity style={styles.itemAction}>*/}
-                {/*  <Ionicons name="chatbubble-ellipses-outline" size={18} color="#01a3d0" />*/}
-                {/*</TouchableOpacity>*/}
+
+                <TouchableOpacity style={styles.itemAction} onPress={() => handleNotification(detail)}>
+                  <Ionicons name={enabled ? "notifications" : "notifications-off-outline"} size={18} color="#01a3d0" />
+                </TouchableOpacity>
+
               </View>
 
             </View>
@@ -631,6 +697,15 @@ const styles = StyleSheet.create({
   },
   itemAction:{
     borderColor: "#01a3d0",
+    borderWidth: 1,
+    borderRadius: '50%',
+    width: 30,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  itemActionStar:{
+    borderColor: "#ffee01",
     borderWidth: 1,
     borderRadius: '50%',
     width: 30,

@@ -86,8 +86,8 @@ export default function ChapterModal({ visible, onClose, truyenId, onSelect }) {
                                 onClose();
                             }}
                         >
-                            <Text>{item.title}</Text>
-                            <Text>{item.ten_chuong}</Text>
+                            <Text >{item.title}</Text>
+                            <Text style={{ paddingLeft: 15}}>{item.ten_chuong}</Text>
                         </TouchableOpacity>
                     )}
 

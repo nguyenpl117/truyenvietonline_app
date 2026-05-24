@@ -29,7 +29,8 @@ export default function Library({ navigation }) {
       style={styles.itemContainer}
       onPress={() => navigation.navigate('Reading', { book: item, chapter: {id:  item.chapter_id} })}
     >
-      <Image source={{ uri: item.cover }} style={styles.cover} resizeMode="cover" />
+      <Image source={{ uri: item?.cover && item.cover.trim() !== ''
+            ? item.cover : 'https://truyenvietonline.com/wp-content/themes/truyenviet/assets/images/logo-truyen-viet-online.png' }} style={styles.cover} resizeMode="cover" />
       <View style={styles.info}>
         <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
         <View style={styles.progressRow}>

@@ -18,10 +18,17 @@ import BookTacGia from "./components/BookTacGia";
 import BookCategory from "./components/BookCategory";
 import FavoriteScreen from "./components/FavoriteScreen";
 import RateBook from "./components/RateBook";
+import RegisterScreen from "./components/RegisterScreen";
+import LoginScreen from "./components/LoginScreen";
 import {checkVersion} from "./src/utils/version";
 import { AppOpenAd, TestIds, AdEventType } from 'react-native-google-mobile-ads';
 import mobileAds from 'react-native-google-mobile-ads';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
+import {PermissionsAndroid} from 'react-native';
+import {getProfile} from "./api/truyenApiAuth";
+import RatingComment from "./components/RatingComment";
+import Toast from 'react-native-toast-message';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -38,7 +45,7 @@ function MainTabs() {
           else if (route.name === 'Explore') iconName = focused ? 'compass' : 'compass-outline';
           else if (route.name === 'Ranking') iconName = focused ? 'trophy' : 'trophy-outline';
           else if (route.name === 'Search') iconName = focused ? 'search' : 'search-outline';
-          // else if (route.name === 'Account') iconName = focused ? 'person' : 'person-outline';
+          else if (route.name === 'Account') iconName = focused ? 'person' : 'person-outline';
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#1e40af',
@@ -50,7 +57,7 @@ function MainTabs() {
       <Tab.Screen name="Explore" component={Home} options={{ title: 'Khám phá' }} />
       <Tab.Screen name="Search" component={Search} options={{ title: 'Tìm truyện' }} />
       <Tab.Screen name="Ranking" component={Ranking} options={{ title: 'Xếp hạng' }} />
-      {/*<Tab.Screen name="Account" component={Profile} options={{ title: 'Tài khoản' }} />*/}
+      <Tab.Screen name="Account" component={Profile} options={{ title: 'Tài khoản' }} />
     </Tab.Navigator>
   );
 }
@@ -64,15 +71,42 @@ const adUnitId = __DEV__
         : 'ca-app-pub-7354264038097352/1788859460';
 
 // thời gian chờ (ví dụ 10 phút)
-const MIN_INTERVAL = 2 * 24 * 60 * 60 * 1000;
+const MIN_INTERVAL = 1 * 60 * 1000;
+
+
+
+async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+        console.log('Authorization status:', authStatus);
+    }
+}
 
 export default function App() {
+
+    async function requestPer(){
+        await requestUserPermission();
+
+        await messaging().registerDeviceForRemoteMessages();
+        console.log(1)
+        const token =  await  messaging().getToken();
+        console.log("tokenmessage", token)
+    }
+
     useEffect(() => {
+        PermissionsAndroid.request('android.permission.POST_NOTIFICATIONS');
+        requestPer()
+
 
         let adListener;
 
         const init = async () => {
             try {
+                await getProfile();
                 // 1. INIT ADMOB
                 await mobileAds().initialize();
                 console.log('AdMob initialized');
@@ -147,10 +181,14 @@ export default function App() {
               <Stack.Screen name="BookCategory" component={BookCategory} />
               <Stack.Screen name="FavoriteScreen" component={FavoriteScreen} />
               <Stack.Screen name="RateBook" component={RateBook} />
+              <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+              <Stack.Screen name="LoginScreen" component={LoginScreen} />
+              <Stack.Screen name="RatingComment" component={RatingComment} />
             </Stack.Navigator>
           </NavigationContainer>
         </View>
       </SafeAreaView>
+        <Toast />
     </SafeAreaProvider>
   );
 }

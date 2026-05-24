@@ -4,7 +4,7 @@ import {
     getTruyenTheLoaiCache,
     setChapterPageCache, setTruyenTheLoaiCache,
 } from './cache';
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getChapterDetailCache, setChapterDetailCache } from './cache';
 const username = 'app_truyenviet';
 const appPassword = 'jU90 DDFd B9M0 LlFI sbiV gn5y';
@@ -14,9 +14,9 @@ const baseUrl = 'https://truyenvietonline.com/wp-json/truyen-api/v1'; // đổi 
 const token = Buffer.from(`${username}:${appPassword}`).toString('base64');
 
 const headers = {
+    'Content-Type': 'application/json',
     'Authorization': `Basic ${token}`,
     'Accept': 'application/json',
-    'User-Agent': 'Mozilla/5.0 (Linux; Android 10)',
     'Referer': 'https://truyenvietonline.com',
     'Connection': 'keep-alive'
 };
@@ -43,30 +43,12 @@ export const favoriteTruyenDetail = async (id) => {
 };
 
 // 1️⃣ Lấy chi tiết truyện
-export const getTruyenDetail = async (id) => {
-    try {
-
-        const response = await fetch(`${baseUrl}/detail/${id}`, { headers });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(`Lỗi ${response.status}: ${errorData.message || 'Không lấy được dữ liệu'}`);
-        }
-
-        const data = await response.json();
-        return data;
-
-    } catch (error) {
-        console.error('getTruyenDetail lỗi:', error.message);
-        throw error;
-    }
-};
 
 
 export const getChapterDetail = async (id, book_id) => {
     try {
-        const cached = getChapterDetailCache(id);
-        if (cached) return cached;
+        // const cached = getChapterDetailCache(id);
+        // if (cached) return cached;
         const response = await fetch(`${baseUrl}/chapter/${id}?truyen_id=${book_id}`, { headers });
         if (!response.ok) {
             const errorData = await response.json();
@@ -181,6 +163,7 @@ export const categoryTruyen = async (id, page = 1) => {
         }
 
         const data = await response.json();
+        console.log("data", data)
         return data;
 
     } catch (error) {
@@ -192,8 +175,8 @@ export const categoryTruyen = async (id, page = 1) => {
 // 4 Lay The Loai Truyen
 export const getTheLoai = async () => {
     try {
-        const cached = getChapterDetailCache('the-loai');
-        if (cached) return cached;
+        // const cached = getChapterDetailCache('the-loai');
+        // if (cached) return cached;
 
         const response = await fetch(`${baseUrl}/the-loai`, { headers });
 
@@ -215,8 +198,8 @@ export const getTheLoai = async () => {
 // 5 Lay The Loai Truyen Detail
 export const getTheLoaiDetail = async (id) => {
     try {
-        const cached = getTruyenTheLoaiCache(id);
-        if (cached) return cached;
+        // const cached = getTruyenTheLoaiCache(id);
+        // if (cached) return cached;
 
         const response = await fetch(`${baseUrl}/truyen-the-loai/${id}`, { headers });
 
@@ -258,17 +241,15 @@ export const getTopTruyen = async () => {
 
 export const getTopTruyenRate = async () => {
     try {
-        // const cached = getTruyenTheLoaiCache(id);
-        // if (cached) return cached;
 
-        const response = await fetch(`${baseUrl}/top?v=2`, { headers });
+
+        const response = await fetch(`${baseUrl}/top`, { headers });
 
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(`Lỗi ${response.status}: ${errorData.message || 'Không lấy được dữ liệu'}`);
         }
         const data = await response.json();
-        // setTruyenTheLoaiCache(id, data);
         return data;
 
     } catch (error) {
@@ -277,6 +258,163 @@ export const getTopTruyenRate = async () => {
     }
 };
 
+export const getStoryRatings = async (truyenId) => {
+    try {
 
 
+        const response = await fetch(`${baseUrl}/story-ratings?truyen_id=${truyenId}`, { headers });
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Lỗi ${response.status}: ${errorData.message || 'Không lấy được dữ liệu'}`);
+        }
+        console.log("response", response)
+        const data = await response.json();
+
+        return data;
+
+    } catch (error) {
+        console.error('Story Rating lỗi:', error.message);
+        throw error;
+    }
+};
+
+
+export const registerUser = async (data) => {
+
+    try {
+
+        const response = await fetch(
+            `${baseUrl}/register`,
+            {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    ...headers,
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify({
+                    username: data.username,
+                    email: data.email,
+                    password: data.password,
+                    confirm_password: data.confirm_password,
+                }),
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message || 'Đăng ký thất bại'
+            );
+        }
+
+        return result;
+
+    } catch (error) {
+
+        console.error(
+            '❌ registerUser lỗi:',
+            error.message
+        );
+
+        throw error;
+    }
+};
+
+
+export const loginUser = async (data) => {
+
+    try {
+
+        const response = await fetch(
+            `${baseUrl}/login`,
+            {
+                method: 'POST',
+
+                headers: {
+                    ...headers,
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify({
+                    username: data.account,
+                    password: data.password
+                }),
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message || 'Đăng nhập thất bại'
+            );
+        }
+
+        // SAVE TOKEN
+        if (result?.user?.token) {
+
+            await AsyncStorage.setItem(
+                'TOKEN',
+                result.user.token
+            );
+        }
+
+        // SAVE USER
+        await AsyncStorage.setItem(
+            'USER',
+            JSON.stringify(result.user)
+        );
+
+        return result;
+
+    } catch (error) {
+
+        console.error(
+            '❌ loginUser lỗi:',
+            error.message
+        );
+
+        throw error;
+    }
+};
+
+
+export const increaseView = async (chuongId = null, truyenNganId = null) => {
+
+    try {
+        const response = await fetch(
+            `${baseUrl}/increase-view`,
+            {
+                method: 'POST',
+
+                headers: {
+                    ...headers,
+                },
+
+                body: JSON.stringify({
+                    chuong_id: chuongId,
+                    truyenngan_id: truyenNganId,
+                }),
+            }
+        );
+
+        const data = await response.json();
+
+        return data;
+
+    } catch (error) {
+
+        console.log(
+            'increaseView error',
+            error
+        );
+
+        return false;
+    }
+};
