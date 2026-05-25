@@ -26,7 +26,7 @@ import mobileAds from 'react-native-google-mobile-ads';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import {PermissionsAndroid} from 'react-native';
-import {getProfile} from "./api/truyenApiAuth";
+import {getProfile, saveFcmToken} from "./api/truyenApiAuth";
 import RatingComment from "./components/RatingComment";
 import Toast from 'react-native-toast-message';
 
@@ -95,6 +95,8 @@ export default function App() {
         console.log(1)
         const token =  await  messaging().getToken();
         console.log("tokenmessage", token)
+
+        await saveFcmToken(Platform.OS , token);
     }
 
     useEffect(() => {

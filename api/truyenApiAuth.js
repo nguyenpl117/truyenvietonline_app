@@ -235,3 +235,49 @@ export const toggleStoryNotification = async (truyenId, enabled) => {
 
 
 };
+
+
+
+
+export const saveFcmToken = async (device_type, fcm_token) => {
+
+    try {
+        const token = await getToken();
+        if (!token) return null;
+        const response = await fetch(
+            `${baseUrl}/save-fcm-tokens`,
+            {
+                method: 'POST',
+                headers: await createHeaders(token),
+                body: JSON.stringify({
+                    device_type,
+                    fcm_token,
+                }),
+            }
+        );
+
+        const text = await response.text();
+
+        console.log('RAW RESPONSE:', text);
+
+        const data = JSON.parse(text);
+
+        console.log("data", data)
+
+        if (!response.ok) {
+            throw new Error(
+                data.message
+            );
+        }
+
+        return data;
+
+    } catch (error) {
+
+        console.log('checkLogin error', error);
+
+        return false;
+    }
+
+
+};

@@ -6,12 +6,14 @@ import {
     TouchableOpacity,
     StyleSheet,
     Alert,
-    ScrollView, Image,
+    ScrollView, Image, Platform,
 } from 'react-native';
 import HeaderLight from "./HeaderLight";
 import {loginUser, registerUser} from "../api/truyenApi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from 'react-native-toast-message';
+import {saveFcmToken} from "../api/truyenApiAuth";
+import messaging from "@react-native-firebase/messaging";
 
 export default function LoginScreen({ navigation }) {
     const [account, setAccount] = useState('');
@@ -55,6 +57,10 @@ export default function LoginScreen({ navigation }) {
                     'TOKEN',
                     result.user.token
                 );
+
+                const token = await messaging().getToken();
+
+                await saveFcmToken(Platform.OS, token);
             }
 
             // SAVE USER
