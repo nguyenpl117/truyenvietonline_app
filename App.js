@@ -24,15 +24,19 @@ import {checkVersion} from "./src/utils/version";
 import { AppOpenAd, TestIds, AdEventType } from 'react-native-google-mobile-ads';
 import mobileAds from 'react-native-google-mobile-ads';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import messaging from '@react-native-firebase/messaging';
+import messaging, {
+    getMessaging,
+    getInitialNotification,
+} from '@react-native-firebase/messaging';
 import {PermissionsAndroid} from 'react-native';
 import {getProfile, saveFcmToken} from "./api/truyenApiAuth";
 import RatingComment from "./components/RatingComment";
 import Toast from 'react-native-toast-message';
-
+import { createNavigationContainerRef } from '@react-navigation/native';
+export const navigationRef = createNavigationContainerRef();
+const messagingInstance = getMessaging();
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
 function MainTabs() {
   return (
     <Tab.Navigator
@@ -106,6 +110,62 @@ export default function App() {
 
         let adListener;
 
+        // app background -> click notification
+        const unsubscribeNotification =
+            messaging().onNotificationOpenedApp(remoteMessage => {
+
+                console.log('Notification click background');
+
+                const storyId = remoteMessage?.data?.story_id;
+                const screen = remoteMessage?.data?.screen;
+                const title = remoteMessage?.notification?.title;
+                const chapter_id = remoteMessage?.data?.chapter_id;
+                const chapter_name = remoteMessage?.data?.chapter_name;
+                console.log("remoteMessage2",remoteMessage)
+                if (screen) {
+
+                    navigationRef.navigate(screen, { book: {id: storyId, title: title}, chapter: {id: chapter_id, title: chapter_name} });
+
+                }
+
+            });
+
+        // app killed -> click notification
+        getInitialNotification(messagingInstance)
+            .then(remoteMessage => {
+
+                if (remoteMessage) {
+
+                    console.log('Notification click quit app');
+
+                    const storyId = remoteMessage?.data?.story_id;
+                    const screen = remoteMessage?.data?.screen;
+                    const title = remoteMessage?.notification?.title;
+                    const chapter_id = remoteMessage?.data?.chapter_id;
+                    const chapter_title = remoteMessage?.data?.chapter_name;
+
+                    console.log('remoteMessage1', remoteMessage);
+
+                    if (screen) {
+                        setTimeout(() => {
+                            navigationRef.navigate(screen, {
+                                book: {
+                                    id: storyId,
+                                    title: title,
+                                },
+                                chapter: {
+                                    id: chapter_id,
+                                    title: chapter_title,
+                                },
+                            });
+                        }, 1000);
+                    }
+                }
+
+            })
+            .catch(error => {
+                console.log(error);
+            });
         const init = async () => {
             try {
                 await getProfile();
@@ -157,6 +217,7 @@ export default function App() {
             if (adListener) {
                 adListener();
             }
+            unsubscribeNotification();
         };
 
     }, []);
@@ -167,7 +228,7 @@ export default function App() {
         <StatusBar style="dark" />
 
         <View style={{ flex: 1 }}>
-          <NavigationContainer>
+          <NavigationContainer  ref={navigationRef}>
             <Stack.Navigator 
               initialRouteName="MainTabs"
               screenOptions={{

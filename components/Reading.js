@@ -50,7 +50,7 @@ export default function Reading({ route, navigation }) {
 
   const { book, chapter: initialChapter } = route.params;
   const [chapter, setChapter] = useState(initialChapter);
-  const [detail, setDetail] = useState(null);
+  const [detail, setDetail] = useState({});
   const [loading, setLoading] = useState(true);
 
   const [fontSize, setFontSize] = useState(15);
@@ -235,7 +235,7 @@ export default function Reading({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <HeaderLight textTitle={book.title + ' - ' + detail.title} link={detail.link}/>
+      <HeaderLight textTitle={book.title + ' - ' + detail?.title} link={detail?.link}/>
       <ScrollView showsVerticalScrollIndicator={false} onTouchStart={stopAutoScroll}  ref={scrollRef}
                   onScroll={(e) => {
                     scrollY.current = e.nativeEvent.contentOffset.y;
@@ -247,7 +247,7 @@ export default function Reading({ route, navigation }) {
         {/* Chapter Header Card */}
         <View style={styles.headerCard}>
           <Text style={styles.bookTitle}>{book.title.toUpperCase()}</Text>
-          <Text style={styles.chapterNumber}>Chương {detail.chapter_number}</Text>
+          <Text style={styles.chapterNumber}>Chương {detail?.chapter_number}</Text>
         </View>
 
         {/* Story Content */}
