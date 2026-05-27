@@ -83,50 +83,50 @@ const SelectTheLoaiDropdown = ({ onChange }) => {
 
     return (
         <View style={styles.container}>
-            <View style={{ width: 150, flex: 1}}>
-            <DropDownPicker
-                open={open}
-                value={selected}
-                items={items}
-                setOpen={setOpen}
-                setValue={setSelected}
-                setItems={setItems}
-                placeholder="-- Chọn thể loại --"
-                searchable={false}
-                onChangeValue={(value) => {
-                    const selectedItem = items.find(item => item.value === value);
-                    console.log(selectedItem)
-                    onChange && onChange({
-                        value,
-                        label: selectedItem?.label,
-                    });
-                }}
-                style={styles.dropdown}
-                listMode="MODAL"
-                zIndex={1000}
-                modalTitle="Chọn Danh Mục"
-                modalTitleStyle={{
-                    width: '100%',         // QUAN TRỌNG để center đúng
-                    paddingLeft: 15,
-                    fontWeight: 'bold'
-                }}
-                modalContentContainerStyle={{
-                    backgroundColor: '#efefef',
-                    paddingTop: 20,
-                    paddingBottom: 20
-                }}
-                closeIconStyle={{
-                    tintColor: '#1e40af', // màu dấu X
-                }}
-                listItemContainerStyle={{
-                    backgroundColor: '#fff',
-                    paddingHorizontal: 20
-                }}
-                modalTitleContainerStyle={{
-                    flexDirection: 'row-reverse',
+            <View style={{ width: 150, flex: 1 }}>
+                <DropDownPicker
+                    open={open}
+                    value={selected}
+                    items={items}
+                    setOpen={setOpen}
+                    setValue={setSelected}
+                    setItems={setItems}
+                    placeholder="-- Chọn thể loại --"
+                    searchable={false}
+                    onChangeValue={(value) => {
+                        const selectedItem = items.find(item => item.value === value);
+                        console.log(selectedItem)
+                        onChange && onChange({
+                            value,
+                            label: selectedItem?.label,
+                        });
+                    }}
+                    style={styles.dropdown}
+                    listMode="MODAL"
+                    zIndex={1000}
+                    modalTitle="Chọn Danh Mục"
+                    modalTitleStyle={{
+                        width: '100%',         // QUAN TRỌNG để center đúng
+                        paddingLeft: 15,
+                        fontWeight: 'bold'
+                    }}
+                    modalContentContainerStyle={{
+                        backgroundColor: '#efefef',
+                        paddingTop: 20,
+                        paddingBottom: 20
+                    }}
+                    closeIconStyle={{
+                        tintColor: '#1e40af', // màu dấu X
+                    }}
+                    listItemContainerStyle={{
+                        backgroundColor: '#fff',
+                        paddingHorizontal: 20
+                    }}
+                    modalTitleContainerStyle={{
+                        flexDirection: 'row-reverse',
 
-                }}
-            />
+                    }}
+                />
             </View>
         </View>
     );
