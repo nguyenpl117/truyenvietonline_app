@@ -11,6 +11,7 @@ const MENU_ITEMS = [
   { id: 'guide', title: 'Hướng dẫn sử dụng', icon: 'help-circle-outline', color: '#3b82f6', view: '' },
   { id: 'about', title: 'Giới thiệu', icon: 'information-circle-outline', color: '#10b981', view: '' },
   { id: 'login', title: 'Đăng nhập', icon: 'log-in-outline', color: '#ef4444', view: 'LoginScreen' },
+  { id: 'delete', title: 'Xóa tài khoản', icon: 'trash-outline', color: '#ef4444', view: '' },
   { id: 'logout', title: 'Thoát', icon: 'log-out-outline', color: '#ef4444', view: '' },
 ];
 
@@ -43,6 +44,9 @@ export default function Profile({ navigation }) {
     if (item.id === 'logout') {
       return isLoggedIn; // chỉ hiện login khi chưa đăng nhập
     }
+    if (item.id === 'delete') {
+      return isLoggedIn; // chỉ hiện login khi chưa đăng nhập
+    }
     return true;
   });
 
@@ -51,7 +55,7 @@ export default function Profile({ navigation }) {
     try {
 
       await AsyncStorage.removeItem('TOKEN');
-      await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem('USER');
 
       setToken(null);
       setUser(null);
@@ -91,6 +95,24 @@ export default function Profile({ navigation }) {
       );
       return;
     }
+
+    if (item.id === 'delete') {
+      Alert.alert(
+          'Xóa tài khoản',
+          'Bạn có chắc muốn xóa tài khoản?',
+          [
+            {
+              text: 'Huỷ',
+              style: 'cancel',
+            },
+            {
+              text: 'OK',
+              onPress: deleteAccount,
+            },
+          ]
+      );
+      return;
+    }
     return;
     // navigation.navigate(item.view);
   };
@@ -106,10 +128,14 @@ export default function Profile({ navigation }) {
         Toast.show({
           type: 'success',
           text1: 'Thành công',
-          text2: 'Xóa tài khoản thành công',
+          text2: deleteStatus.message,
         });
 
-        navigation.navigate('MainTabs');
+        await AsyncStorage.removeItem('TOKEN');
+        await AsyncStorage.removeItem('USER');
+
+        setToken(null);
+        setUser(null);
       }
 
 
@@ -129,7 +155,7 @@ export default function Profile({ navigation }) {
             style: 'cancel',
           },
           {
-            text: 'Đăng xuất',
+            text: 'OK',
             onPress: deleteAccount,
           },
         ]
