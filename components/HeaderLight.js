@@ -34,9 +34,10 @@ export default function HeaderLight({ textTitle, link }) {
       <Text style={styles.txtLinearHeader} numberOfLines={1}>
         {textTitle}
       </Text>
-      <TouchableOpacity style={styles.btnBack} onPress={onShare}>
+      {link ?  <TouchableOpacity style={styles.btnBack} onPress={onShare}>
         <Ionicons name="share-social" size={25} color="#0f172a" />
-      </TouchableOpacity>
+      </TouchableOpacity> : <View></View> }
+
     </View>
   );
 }

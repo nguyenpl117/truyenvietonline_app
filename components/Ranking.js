@@ -65,7 +65,8 @@ export default function Ranking({ navigation }) {
           style={styles.itemContainer}
           onPress={() => navigation.navigate('Detail', { book: item })}
       >
-        <Image source={{ uri: item.thumbnail }} style={styles.cover} resizeMode="cover" />
+        <Image source={{ uri: item?.thumbnail && item.thumbnail.trim() !== ''
+            ? item.thumbnail : 'https://truyenvietonline.com/wp-content/themes/truyenviet/assets/images/logo-truyen-viet-online.png' }} style={styles.cover} resizeMode="cover" />
 
         <View style={styles.info}>
           <View style={styles.titleRow}>

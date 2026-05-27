@@ -20,8 +20,10 @@ const SelectTheLoaiDropdown = ({ onChange }) => {
                 // 🔹 1. Check cache trước
                 const cache = await AsyncStorage.getItem(CACHE_KEY);
 
+
                 if (cache) {
                     const parsed = JSON.parse(cache);
+                    console.log(parsed)
 
                     // kiểm tra còn hạn không
                     if (Date.now() - parsed.timestamp < CACHE_TIME) {

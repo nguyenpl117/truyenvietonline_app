@@ -50,7 +50,8 @@ export default function BookList({ route, navigation }) {
       style={styles.itemContainer}
       onPress={() => navigation.navigate('Detail', { book: item })}
     >
-      <Image source={{ uri: item.cover }} style={styles.cover} resizeMode="cover" />
+      <Image source={{ uri: item?.cover && item.cover.trim() !== ''
+            ? item.cover : 'https://truyenvietonline.com/wp-content/themes/truyenviet/assets/images/logo-truyen-viet-online.png'  }} style={styles.cover} resizeMode="cover" />
       
       <View style={styles.info}>
         <View style={styles.titleRow}>

@@ -10,7 +10,8 @@ export default function BookCard({ book }) {
     <View style={styles.container} activeOpacity={0.8}>
       <View style={styles.imageWrapper}>
         <Image
-          source={{ uri: book.thumbnail }}
+          source={{ uri:  book?.thumbnail && book.thumbnail.trim() !== ''
+              ? book.thumbnail : 'https://truyenvietonline.com/wp-content/themes/truyenviet/assets/images/logo-truyen-viet-online.png' }}
           style={styles.cover}
           resizeMode="cover"
         />
