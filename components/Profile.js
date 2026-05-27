@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, ScrollView, Alert, Image} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getToken, getUser } from "../api/truyenApiAuth";
+import {deleteAcc, getToken, getUser} from "../api/truyenApiAuth";
 import DeviceInfo from "react-native-device-info";
 import Toast from "react-native-toast-message";
 const currentBuild = DeviceInfo.getVersion();
@@ -95,6 +95,47 @@ export default function Profile({ navigation }) {
     // navigation.navigate(item.view);
   };
 
+  const deleteAccount = async () => {
+    try {
+
+      const deleteStatus = await deleteAcc();
+      if(deleteStatus.success){
+        setToken(null);
+        setUser(null);
+
+        Toast.show({
+          type: 'success',
+          text1: 'Thành công',
+          text2: 'Xóa tài khoản thành công',
+        });
+
+        navigation.navigate('MainTabs');
+      }
+
+
+
+    } catch (error) {
+      console.log('logout error', error);
+    }
+  }
+
+  const  handleDelete = async () => {
+    Alert.alert(
+        'Xóa tài khoản',
+        'Bạn có chắc muốn xóa tài khoản?',
+        [
+          {
+            text: 'Huỷ',
+            style: 'cancel',
+          },
+          {
+            text: 'Đăng xuất',
+            onPress: deleteAccount,
+          },
+        ]
+    );
+  }
+
   return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -105,17 +146,30 @@ export default function Profile({ navigation }) {
 
           {/* USER INFO */}
           {isLoggedIn && (
-              <View style={styles.userBox}>
+              <View style={{ flexDirection: 'row',
+                paddingHorizontal: 20,
+                paddingTop: 20,
+                alignItems: 'center',
+              justifyContent: 'space-between'}} >
+               <View style={styles.userBox}>
+                 <View>
+                   <Image
+                       source={{ uri: 'https://truyenvietonline.com/wp-content/themes/truyenviet/assets/images/logo-truyen-viet-online.png' }}
+                       style={styles.logo}
+                       resizeMode="contain"
+                   />
+                 </View>
+                 <View>
+                   <Text >Xin chào, <Text style={styles.userName}>{user?.name}</Text></Text>
+                   <Text style={styles.userEmail}>{user?.email}</Text>
+                 </View>
+               </View>
                 <View>
-                  <Image
-                      source={{ uri: 'https://truyenvietonline.com/wp-content/themes/truyenviet/assets/images/logo-truyen-viet-online.png' }}
-                      style={styles.logo}
-                      resizeMode="contain"
-                  />
-                </View>
-                <View>
-                  <Text >Xin chào, <Text style={styles.userName}>{user?.name}</Text></Text>
-                  <Text style={styles.userEmail}>{user?.email}</Text>
+                  <TouchableOpacity
+                      onPress={() => handleDelete()}
+                  >
+                    <Ionicons name="trash-outline" size={20} color="#ff0000" />
+                  </TouchableOpacity>
                 </View>
               </View>
           )}
@@ -160,7 +214,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 20,
     paddingTop: 20,
-    alignItems: 'center'
+    alignItems: 'center',
+
   },
   logo:{
     width: 50,
